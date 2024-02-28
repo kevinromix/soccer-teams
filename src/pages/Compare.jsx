@@ -11,14 +11,13 @@ export default function Compare(props) {
     const [stats, setStats] = useState([]);
     const [isLoading, setLoading] = useState(true);
 
-
     useEffect(() => {
         async function fetchData() {
             let _team1 = team1;
             let _team2 = team2;
             let _stats = initData();
             await getGames(_team1, _stats, '1', competitionId, seasonNum).then(async _ =>
-                await new Promise(async resolve => setTimeout(resolve, 1000)).then(async _ =>
+                await new Promise(async resolve => setTimeout(resolve, 300)).then(async _ =>
                     await getGames(_team2, _stats, '2', competitionId, seasonNum).then(_ => {
                         setLoading(false);
                         setStats(_stats);
@@ -31,7 +30,147 @@ export default function Compare(props) {
         }
     }, [competitionId, isLoading, seasonNum, team1, team2]);
 
+    // ------------------------------------------------------------
+    let customKeys = [
+        {
+            key: 'TotalTotal',
+            label: 'TotalTotal:'
+        },
+        {
+            key: 'HomeAway',
+            label: 'HomeAway:'
+        },
+        {
+            key: 'AwayHome',
+            label: 'AwayHome:'
+        },
+        {
+            key: 'HomeHome',
+            label: 'HomeHome:'
+        },
+        {
+            key: 'AwayAway',
+            label: 'AwayAway:'
+        },
+    ];
 
+    const totalColumns = [
+        {
+            key: 'key',
+            fixed: 'left',
+            width: 100,
+            render: (text, record) => {
+                return (
+                    <Row className={`marcador`} >
+                        <span>{record.label}</span>
+                    </Row>
+                );
+            },
+        }
+    ].concat(
+        {
+            title: () => {
+                return <div>{'Team1'}</div>
+            },
+            width: 75,
+            render: (record) => {
+                if (record.key === 'TotalTotal') {
+                    const juegos = stats['Juegos']['team1']['total'];
+                    const avg = parseFloat((stats['AA']['team1']['total'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'HomeAway') {
+                    const juegos = stats['Juegos']['team1']['home'];
+                    const avg = parseFloat((stats['AA']['team1']['home'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'AwayHome') {
+                    const juegos = stats['Juegos']['team1']['away'];
+                    const avg = parseFloat((stats['AA']['team1']['away'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'HomeHome') {
+                    const juegos = stats['Juegos']['team1']['home'];
+                    const avg = parseFloat((stats['AA']['team1']['home'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'AwayAway') {
+                    const juegos = stats['Juegos']['team1']['away'];
+                    const avg = parseFloat((stats['AA']['team1']['away'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                }
+            }
+        },
+        {
+            title: () => {
+                return <div>{'Team2'}</div>
+            },
+            width: 75,
+            render: (record) => {
+                if (record.key === 'TotalTotal') {
+                    const juegos = stats['Juegos']['team2']['total'];
+                    const avg = parseFloat((stats['AA']['team2']['total'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'HomeAway') {
+                    const juegos = stats['Juegos']['team2']['away'];
+                    const avg = parseFloat((stats['AA']['team2']['away'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'AwayHome') {
+                    const juegos = stats['Juegos']['team2']['home'];
+                    const avg = parseFloat((stats['AA']['team2']['home'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'HomeHome') {
+                    const juegos = stats['Juegos']['team2']['home'];
+                    const avg = parseFloat((stats['AA']['team2']['home'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'AwayAway') {
+                    const juegos = stats['Juegos']['team2']['away'];
+                    const avg = parseFloat((stats['AA']['team2']['away'] / juegos).toFixed(2));
+                    return <span>{avg}</span>
+                }
+            }
+        },
+        {
+            title: () => {
+                return <div>{'Avg'}</div>
+            },
+            width: 75,
+            render: (record) => {
+                if (record.key === 'TotalTotal') {
+                    const juegosT1 = stats['Juegos']['team1']['total'];
+                    const juegosT2 = stats['Juegos']['team2']['total'];
+                    const avgT1 = parseFloat((stats['AA']['team1']['total'] / juegosT1).toFixed(2));
+                    const avgT2 = parseFloat((stats['AA']['team2']['total'] / juegosT2).toFixed(2));
+                    const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'HomeAway') {
+                    const juegosT1 = stats['Juegos']['team1']['home'];
+                    const juegosT2 = stats['Juegos']['team2']['away'];
+                    const avgT1 = parseFloat((stats['AA']['team1']['home'] / juegosT1).toFixed(2));
+                    const avgT2 = parseFloat((stats['AA']['team2']['away'] / juegosT2).toFixed(2));
+                    const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'AwayHome') {
+                    const juegosT1 = stats['Juegos']['team1']['away'];
+                    const juegosT2 = stats['Juegos']['team2']['home'];
+                    const avgT1 = parseFloat((stats['AA']['team1']['away'] / juegosT1).toFixed(2));
+                    const avgT2 = parseFloat((stats['AA']['team2']['home'] / juegosT2).toFixed(2));
+                    const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'HomeHome') {
+                    const juegosT1 = stats['Juegos']['team1']['home'];
+                    const juegosT2 = stats['Juegos']['team2']['home'];
+                    const avgT1 = parseFloat((stats['AA']['team1']['home'] / juegosT1).toFixed(2));
+                    const avgT2 = parseFloat((stats['AA']['team2']['home'] / juegosT2).toFixed(2));
+                    const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+                    return <span>{avg}</span>
+                } else if (record.key == 'AwayAway') {
+                    const juegosT1 = stats['Juegos']['team1']['away'];
+                    const juegosT2 = stats['Juegos']['team2']['away'];
+                    const avgT1 = parseFloat((stats['AA']['team1']['away'] / juegosT1).toFixed(2));
+                    const avgT2 = parseFloat((stats['AA']['team2']['away'] / juegosT2).toFixed(2));
+                    const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+                    return <span>{avg}</span>
+                }
+            }
+        }
+    );
     // -------------------------------------------------------------------------------------------
 
     const colTotalTotal = [
@@ -772,53 +911,68 @@ export default function Compare(props) {
                         <Spin size='large' />
                     </Row>
                     :
-                    <Row wrap={false} justify='space-between' style={{ overflow: 'scroll', paddingBottom: '40px' }}>
-                        <Table
-                            columns={colTotalTotal}
-                            dataSource={Object.values(stats)}
-                            bordered={true}
-                            pagination={false}
-                            size='small'
-                            scroll={{ x: 0 }}
-                            style={{ padding: "0px 40px", marginLeft: '355px' }}
-                        />
-                        <Table
-                            columns={colHomeAway}
-                            dataSource={Object.values(stats)}
-                            bordered={true}
-                            pagination={false}
-                            size='small'
-                            scroll={{ x: 0 }}
-                            style={{ padding: "0px 40px" }}
-                        />
-                        <Table
-                            columns={colAwayHome}
-                            dataSource={Object.values(stats)}
-                            bordered={true}
-                            pagination={false}
-                            size='small'
-                            scroll={{ x: 0 }}
-                            style={{ padding: "0px 40px" }}
-                        />
-                        <Table
-                            columns={colHomeHome}
-                            dataSource={Object.values(stats)}
-                            bordered={true}
-                            pagination={false}
-                            size='small'
-                            scroll={{ x: 0 }}
-                            style={{ padding: "0px 40px" }}
-                        />
-                        <Table
-                            columns={colAwayAway}
-                            dataSource={Object.values(stats)}
-                            bordered={true}
-                            pagination={false}
-                            size='small'
-                            scroll={{ x: 0 }}
-                            style={{ padding: "0px 40px", marginRight: '355px' }}
-                        />
-                    </Row>
+                    <div>
+                        <Row justify="center">
+                            <Table
+                                columns={totalColumns}
+                                dataSource={customKeys}
+                                bordered={true}
+                                pagination={false}
+                                size='small'
+                                scroll={{ x: 0 }}
+                                style={{ padding: "30px 40px 0px 40px" }}
+                                rowClassName={record => record.key.includes('home') ? 'home' : record.key.includes('away') ? 'away' : 'total'}
+                            />
+                        </Row>
+                        <br />
+                        <Row wrap={false} justify='space-between' style={{ overflow: 'scroll', paddingBottom: '40px' }}>
+                            <Table
+                                columns={colTotalTotal}
+                                dataSource={Object.values(stats)}
+                                bordered={true}
+                                pagination={false}
+                                size='small'
+                                scroll={{ x: 0 }}
+                                style={{ padding: "0px 40px", marginLeft: '355px' }}
+                            />
+                            <Table
+                                columns={colHomeAway}
+                                dataSource={Object.values(stats)}
+                                bordered={true}
+                                pagination={false}
+                                size='small'
+                                scroll={{ x: 0 }}
+                                style={{ padding: "0px 40px" }}
+                            />
+                            <Table
+                                columns={colAwayHome}
+                                dataSource={Object.values(stats)}
+                                bordered={true}
+                                pagination={false}
+                                size='small'
+                                scroll={{ x: 0 }}
+                                style={{ padding: "0px 40px" }}
+                            />
+                            <Table
+                                columns={colHomeHome}
+                                dataSource={Object.values(stats)}
+                                bordered={true}
+                                pagination={false}
+                                size='small'
+                                scroll={{ x: 0 }}
+                                style={{ padding: "0px 40px" }}
+                            />
+                            <Table
+                                columns={colAwayAway}
+                                dataSource={Object.values(stats)}
+                                bordered={true}
+                                pagination={false}
+                                size='small'
+                                scroll={{ x: 0 }}
+                                style={{ padding: "0px 40px", marginRight: '355px' }}
+                            />
+                        </Row>
+                    </div>
             }
         </div>
     );
@@ -836,21 +990,71 @@ async function getStats(gameId) {
     return await fetch(`https://webws.365scores.com/web/game/?appTypeId=5&langId=29&timezoneName=America/Mexico_City&userCountryId=31&gameId=${gameId}&topBookmaker=14`).then(async response => await response.json());
 }
 
+
+
+
+
+
+
+
+
+// -------------------
+
+// API FIRST GAMES
+async function getFirstGames(teamId) {
+    return await fetch(`https://webws.365scores.com/web/games/results/?appTypeId=5&langId=29&timezoneName=America/Mexico_City&userCountryId=31&competitors=${teamId}&showOdds=true&includeTopBettingOpportunity=1&topBookmaker=14`)
+        .then(async response => await response.json());
+}
+
+
+async function getNextGames(teamId, lastGameId) {
+    return await fetch(`https://webws.365scores.com/web/games/?langId=29&timezoneId=79&userCountryId=31&apptype=5&competitors=${teamId}&games=1&aftergame=${lastGameId}&direction=-1&withmainodds=true`)
+        .then(async response => await response.json());
+}
+
 // Obtener API Games
-async function getGames(team, stats, teamNum, competitionId, seasonNum) {
-    const response = await fetch(`https://webws.365scores.com/web/games/results/?appTypeId=5&langId=29&timezoneName=America/Mexico_City&userCountryId=31&competitors=${team.id}&showOdds=true&includeTopBettingOpportunity=1&topBookmaker=14`).then(async (response) => await response.json());
-    // Llenamos el arreglo de games
-    setGames(team, stats, teamNum, competitionId, seasonNum, response.games);
-    // Obtenemos las stats con el API
-    const responseData = [];
-    await team.games.reduce(async function (promise, game) {
-        return await promise.then(async function () {
-            return await Promise.all([
-                responseData.push(await getStats(game.id)),
-                await delay(500)
-            ]);
+async function addNextGames(teamId, lastGameId, seasonNum, firstResponse) {
+    await getNextGames(teamId, lastGameId).then(async (response) => {
+        // const lastIndex = response.games.length - 1;
+        let hasGame = false;
+        await response.games.forEach(game => {
+            if (game.seasonNum === seasonNum) {
+                if (game.id < lastGameId) {
+                    lastGameId = game.id;
+                }
+                firstResponse.games.push(game);
+            }
         });
-    }, Promise.resolve()).then(_ => setGameStats(team, stats, teamNum, responseData));
+        if (hasGame) {
+            await new Promise(async resolve => setTimeout(resolve, 300));
+            await addNextGames(teamId, lastGameId, seasonNum, firstResponse);
+        }
+    });
+    return firstResponse;
+}
+
+async function getGames(team, stats, teamNum, competitionId, seasonNum) {
+    let lastGameId;
+    await getFirstGames(team.id).then(async firstResponse => {
+        // Obtenemos el last gameId
+        lastGameId = firstResponse.games[firstResponse.games.length - 1].id;
+        // Agregar los Juegos faltantes
+        await addNextGames(team.id, lastGameId, seasonNum, firstResponse).then(async response => {
+            console.log(response);
+            // Llenamos el arreglo de games
+            setGames(team, stats, teamNum, competitionId, seasonNum, response.games);
+            // Obtenemos las stats con el API
+            const responseData = [];
+            await team.games.reduce(async function (promise, game) {
+                return await promise.then(async function () {
+                    return await Promise.all([
+                        responseData.push(await getStats(game.id)),
+                        await delay(300)
+                    ]);
+                });
+            }, Promise.resolve()).then(_ => setGameStats(team, stats, teamNum, responseData));
+        });
+    });
 }
 
 // Llenar arreglo games

@@ -216,7 +216,7 @@ async function setNextGames(competitionId, results, marcadores, seasonNum, lastG
                 setJornada(results, marcadores, game);
             });
             lastGameId = response.games[0].id;
-            await new Promise(async resolve => setTimeout(resolve, 1000));
+            await new Promise(async resolve => setTimeout(resolve, 300));
             await setNextGames(competitionId, results, marcadores, seasonNum, lastGameId);
         }
     });
@@ -242,7 +242,7 @@ async function fetchData(competitionId, results, marcadores) {
         response.games.forEach(game => {
             setJornada(results, marcadores, game);
         });
-    }).then(async _ => await new Promise(async resolve => setTimeout(resolve, 1000)))
+    }).then(async _ => await new Promise(async resolve => setTimeout(resolve, 300)))
         .then(async _ => {
             await setNextGames(competitionId, results, marcadores, seasonNum, lastGameId)
         });
