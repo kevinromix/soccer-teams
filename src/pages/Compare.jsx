@@ -3,22 +3,33 @@ import { Affix, Avatar, Row, Col, Table, Spin } from 'antd'
 import { Link, useParams } from "react-router-dom";
 
 export default function Compare(props) {
+
+    const [isLoading, setLoading] = useState(true);
+    const [stats, setStats] = useState([]);
+    // --------------NOT CUSTOM-------------------
     const { customPath } = useParams();
-    const [competitionId] = useState(props.competitionId(customPath));
-    const seasonNum = parseInt(localStorage.getItem("seasonNum"));
+    const [competitionIdT1] = useState(props.competitionId(customPath));
+    const [competitionIdT2] = useState(props.competitionId(customPath));
+    const seasonNumT1 = parseInt(localStorage.getItem("seasonNum"));
+    const seasonNumT2 = parseInt(localStorage.getItem("seasonNum"));
     const [team1, setTeam1] = useState(JSON.parse(localStorage.getItem("team1")));
     const [team2, setTeam2] = useState(JSON.parse(localStorage.getItem("team2")));
-    const [stats, setStats] = useState([]);
-    const [isLoading, setLoading] = useState(true);
+    // ----------------CUSTOM--------------------
+    // const [team1, setTeam1] = useState({ id: 480, name: "Unknown" });
+    // const seasonNumT1 = 91;
+    // const competitionIdT1 = 35;
+    // const [team2, setTeam2] = useState({ id: 132, name: "Unknown" });
+    // const seasonNumT2 = 95;
+    // const competitionIdT2 = 11;
 
     useEffect(() => {
         async function fetchData() {
             let _team1 = team1;
             let _team2 = team2;
             let _stats = initData();
-            await getGames(_team1, _stats, '1', competitionId, seasonNum).then(async _ =>
+            await getGames(_team1, _stats, '1', competitionIdT1, seasonNumT1).then(async _ =>
                 await new Promise(async resolve => setTimeout(resolve, 300)).then(async _ =>
-                    await getGames(_team2, _stats, '2', competitionId, seasonNum).then(_ => {
+                    await getGames(_team2, _stats, '2', competitionIdT2, seasonNumT2).then(_ => {
                         setLoading(false);
                         setStats(_stats);
                         setTeam1(_team1);
@@ -28,7 +39,7 @@ export default function Compare(props) {
         if (isLoading) {
             fetchData();
         }
-    }, [competitionId, isLoading, seasonNum, team1, team2]);
+    }, [competitionIdT1, competitionIdT2, isLoading, seasonNumT1, seasonNumT2, team1, team2]);
 
     // ------------------------------------------------------------
     let customKeys = [
@@ -78,19 +89,19 @@ export default function Compare(props) {
                     const juegos = stats['Juegos']['team1']['total'];
                     const avg = parseFloat((stats['AA']['team1']['total'] / juegos).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'HomeAway') {
+                } else if (record.key === 'HomeAway') {
                     const juegos = stats['Juegos']['team1']['home'];
                     const avg = parseFloat((stats['AA']['team1']['home'] / juegos).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'AwayHome') {
+                } else if (record.key === 'AwayHome') {
                     const juegos = stats['Juegos']['team1']['away'];
                     const avg = parseFloat((stats['AA']['team1']['away'] / juegos).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'HomeHome') {
+                } else if (record.key === 'HomeHome') {
                     const juegos = stats['Juegos']['team1']['home'];
                     const avg = parseFloat((stats['AA']['team1']['home'] / juegos).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'AwayAway') {
+                } else if (record.key === 'AwayAway') {
                     const juegos = stats['Juegos']['team1']['away'];
                     const avg = parseFloat((stats['AA']['team1']['away'] / juegos).toFixed(2));
                     return <span>{avg}</span>
@@ -107,19 +118,19 @@ export default function Compare(props) {
                     const juegos = stats['Juegos']['team2']['total'];
                     const avg = parseFloat((stats['AA']['team2']['total'] / juegos).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'HomeAway') {
+                } else if (record.key === 'HomeAway') {
                     const juegos = stats['Juegos']['team2']['away'];
                     const avg = parseFloat((stats['AA']['team2']['away'] / juegos).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'AwayHome') {
+                } else if (record.key === 'AwayHome') {
                     const juegos = stats['Juegos']['team2']['home'];
                     const avg = parseFloat((stats['AA']['team2']['home'] / juegos).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'HomeHome') {
+                } else if (record.key === 'HomeHome') {
                     const juegos = stats['Juegos']['team2']['home'];
                     const avg = parseFloat((stats['AA']['team2']['home'] / juegos).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'AwayAway') {
+                } else if (record.key === 'AwayAway') {
                     const juegos = stats['Juegos']['team2']['away'];
                     const avg = parseFloat((stats['AA']['team2']['away'] / juegos).toFixed(2));
                     return <span>{avg}</span>
@@ -139,28 +150,28 @@ export default function Compare(props) {
                     const avgT2 = parseFloat((stats['AA']['team2']['total'] / juegosT2).toFixed(2));
                     const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'HomeAway') {
+                } else if (record.key === 'HomeAway') {
                     const juegosT1 = stats['Juegos']['team1']['home'];
                     const juegosT2 = stats['Juegos']['team2']['away'];
                     const avgT1 = parseFloat((stats['AA']['team1']['home'] / juegosT1).toFixed(2));
                     const avgT2 = parseFloat((stats['AA']['team2']['away'] / juegosT2).toFixed(2));
                     const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'AwayHome') {
+                } else if (record.key === 'AwayHome') {
                     const juegosT1 = stats['Juegos']['team1']['away'];
                     const juegosT2 = stats['Juegos']['team2']['home'];
                     const avgT1 = parseFloat((stats['AA']['team1']['away'] / juegosT1).toFixed(2));
                     const avgT2 = parseFloat((stats['AA']['team2']['home'] / juegosT2).toFixed(2));
                     const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'HomeHome') {
+                } else if (record.key === 'HomeHome') {
                     const juegosT1 = stats['Juegos']['team1']['home'];
                     const juegosT2 = stats['Juegos']['team2']['home'];
                     const avgT1 = parseFloat((stats['AA']['team1']['home'] / juegosT1).toFixed(2));
                     const avgT2 = parseFloat((stats['AA']['team2']['home'] / juegosT2).toFixed(2));
                     const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
                     return <span>{avg}</span>
-                } else if (record.key == 'AwayAway') {
+                } else if (record.key === 'AwayAway') {
                     const juegosT1 = stats['Juegos']['team1']['away'];
                     const juegosT2 = stats['Juegos']['team2']['away'];
                     const avgT1 = parseFloat((stats['AA']['team1']['away'] / juegosT1).toFixed(2));
@@ -329,12 +340,16 @@ export default function Compare(props) {
                         let icon = '🟰';
                         if (avgTeam1 !== avgTeam2) {
                             if (!record.isDiff) {
+                                const tenPercent = avgTeam1 * 0.10;
+                                avgTeam2 += tenPercent;
                                 if (avgTeam1 > avgTeam2) {
                                     icon = '✅';
                                 } else {
                                     icon = '❌';
                                 }
                             } else {
+                                const tenPercent = avgTeam1 * 0.10;
+                                avgTeam1 += tenPercent;
                                 if (avgTeam1 < avgTeam2) {
                                     icon = '✅';
                                 } else {
@@ -406,12 +421,16 @@ export default function Compare(props) {
                         let icon = '🟰';
                         if (avgTeam2 !== avgTeam1) {
                             if (!record.isDiff) {
+                                const tenPercent = avgTeam1 * 0.10;
+                                avgTeam2 += tenPercent;
                                 if (avgTeam2 > avgTeam1) {
                                     icon = '✅';
                                 } else {
                                     icon = '❌';
                                 }
                             } else {
+                                const tenPercent = avgTeam1 * 0.10;
+                                avgTeam1 += tenPercent;
                                 if (avgTeam2 < avgTeam1) {
                                     icon = '✅';
                                 } else {
@@ -421,139 +440,6 @@ export default function Compare(props) {
                         }
                         return (
                             <div className='away'>
-                                <span>{icon}</span>
-                            </div>
-                        );
-                    },
-                },
-            ]
-        },
-        {
-            render: (_, record) => {
-                return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'} >
-                        <span>{record.label}</span>
-                    </Row>
-                );
-            },
-        },
-    ];
-
-    const colAwayHome = [
-        {
-            render: (_, record) => {
-                return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'}>
-                        <span>{record.label}</span>
-                    </Row>
-                );
-            },
-        },
-        {
-            title: <div className='away'>
-                <span>Away</span>
-            </div>,
-            children: [
-                {
-                    title: <div className='equipo' />,
-                    render: (_, record) => {
-                        let avgTeam1 = parseFloat((record.team1.away / stats['Juegos'].team1.away).toFixed(2));
-                        let avgTeam2 = parseFloat((record.team2.home / stats['Juegos'].team2.home).toFixed(2));
-                        let icon = '🟰';
-                        if (avgTeam1 !== avgTeam2) {
-                            if (!record.isDiff) {
-                                if (avgTeam1 > avgTeam2) {
-                                    icon = '✅';
-                                } else {
-                                    icon = '❌';
-                                }
-                            } else {
-                                if (avgTeam1 < avgTeam2) {
-                                    icon = '✅';
-                                } else {
-                                    icon = '❌';
-                                }
-                            }
-                        }
-                        return (
-                            <div className='away'>
-                                <span>{icon}</span>
-                            </div>
-                        );
-                    },
-                },
-                {
-                    title: () => <div className='equipo'>Total</div>,
-                    render: (_, record) => {
-                        return (
-                            <div className='away'>
-                                <span>{record.team1.away}</span>
-                            </div>
-                        );
-                    },
-                },
-                {
-                    title: () => <div className='equipo'>Avg</div>,
-                    render: (_, record) => {
-                        let avg = parseFloat((record.team1.away / stats['Juegos'].team1.away).toFixed(2));
-                        return (
-                            <div className='away'>
-                                <span>{avg}</span>
-                            </div>
-                        );
-                    },
-                },
-            ],
-        },
-        {
-            title: <div className='home'>
-                <span>Home</span>
-            </div >,
-            children: [
-                {
-                    title: () => <div className='rival'>Avg</div>,
-                    render: (_, record) => {
-                        let avg = parseFloat((record.team2.home / stats['Juegos'].team2.home).toFixed(2));
-                        return (
-                            <div className='home'>
-                                <span>{avg}</span>
-                            </div>
-                        );
-                    },
-                },
-                {
-                    title: () => <div className='rival'>Total</div>,
-                    render: (_, record) => {
-                        return (
-                            <div className='home'>
-                                <span>{record.team2.home}</span>
-                            </div>
-                        );
-                    },
-                },
-                {
-                    title: <div className='rival' />,
-                    render: (_, record) => {
-                        let avgTeam1 = parseFloat((record.team1.away / stats['Juegos'].team1.away).toFixed(2));
-                        let avgTeam2 = parseFloat((record.team2.home / stats['Juegos'].team2.home).toFixed(2));
-                        let icon = '🟰';
-                        if (avgTeam2 !== avgTeam1) {
-                            if (!record.isDiff) {
-                                if (avgTeam2 > avgTeam1) {
-                                    icon = '✅';
-                                } else {
-                                    icon = '❌';
-                                }
-                            } else {
-                                if (avgTeam2 < avgTeam1) {
-                                    icon = '✅';
-                                } else {
-                                    icon = '❌';
-                                }
-                            }
-                        }
-                        return (
-                            <div className='home'>
                                 <span>{icon}</span>
                             </div>
                         );
@@ -668,6 +554,139 @@ export default function Compare(props) {
                     title: <div className='rival' />,
                     render: (_, record) => {
                         let avgTeam1 = parseFloat((record.team1.home / stats['Juegos'].team1.home).toFixed(2));
+                        let avgTeam2 = parseFloat((record.team2.home / stats['Juegos'].team2.home).toFixed(2));
+                        let icon = '🟰';
+                        if (avgTeam2 !== avgTeam1) {
+                            if (!record.isDiff) {
+                                if (avgTeam2 > avgTeam1) {
+                                    icon = '✅';
+                                } else {
+                                    icon = '❌';
+                                }
+                            } else {
+                                if (avgTeam2 < avgTeam1) {
+                                    icon = '✅';
+                                } else {
+                                    icon = '❌';
+                                }
+                            }
+                        }
+                        return (
+                            <div className='home'>
+                                <span>{icon}</span>
+                            </div>
+                        );
+                    },
+                },
+            ]
+        },
+        {
+            render: (_, record) => {
+                return (
+                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'} >
+                        <span>{record.label}</span>
+                    </Row>
+                );
+            },
+        },
+    ];
+
+    const colAwayHome = [
+        {
+            render: (_, record) => {
+                return (
+                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'}>
+                        <span>{record.label}</span>
+                    </Row>
+                );
+            },
+        },
+        {
+            title: <div className='away'>
+                <span>Away</span>
+            </div>,
+            children: [
+                {
+                    title: <div className='equipo' />,
+                    render: (_, record) => {
+                        let avgTeam1 = parseFloat((record.team1.away / stats['Juegos'].team1.away).toFixed(2));
+                        let avgTeam2 = parseFloat((record.team2.home / stats['Juegos'].team2.home).toFixed(2));
+                        let icon = '🟰';
+                        if (avgTeam1 !== avgTeam2) {
+                            if (!record.isDiff) {
+                                if (avgTeam1 > avgTeam2) {
+                                    icon = '✅';
+                                } else {
+                                    icon = '❌';
+                                }
+                            } else {
+                                if (avgTeam1 < avgTeam2) {
+                                    icon = '✅';
+                                } else {
+                                    icon = '❌';
+                                }
+                            }
+                        }
+                        return (
+                            <div className='away'>
+                                <span>{icon}</span>
+                            </div>
+                        );
+                    },
+                },
+                {
+                    title: () => <div className='equipo'>Total</div>,
+                    render: (_, record) => {
+                        return (
+                            <div className='away'>
+                                <span>{record.team1.away}</span>
+                            </div>
+                        );
+                    },
+                },
+                {
+                    title: () => <div className='equipo'>Avg</div>,
+                    render: (_, record) => {
+                        let avg = parseFloat((record.team1.away / stats['Juegos'].team1.away).toFixed(2));
+                        return (
+                            <div className='away'>
+                                <span>{avg}</span>
+                            </div>
+                        );
+                    },
+                },
+            ],
+        },
+        {
+            title: <div className='home'>
+                <span>Home</span>
+            </div >,
+            children: [
+                {
+                    title: () => <div className='rival'>Avg</div>,
+                    render: (_, record) => {
+                        let avg = parseFloat((record.team2.home / stats['Juegos'].team2.home).toFixed(2));
+                        return (
+                            <div className='home'>
+                                <span>{avg}</span>
+                            </div>
+                        );
+                    },
+                },
+                {
+                    title: () => <div className='rival'>Total</div>,
+                    render: (_, record) => {
+                        return (
+                            <div className='home'>
+                                <span>{record.team2.home}</span>
+                            </div>
+                        );
+                    },
+                },
+                {
+                    title: <div className='rival' />,
+                    render: (_, record) => {
+                        let avgTeam1 = parseFloat((record.team1.away / stats['Juegos'].team1.away).toFixed(2));
                         let avgTeam2 = parseFloat((record.team2.home / stats['Juegos'].team2.home).toFixed(2));
                         let icon = '🟰';
                         if (avgTeam2 !== avgTeam1) {
@@ -945,7 +964,7 @@ export default function Compare(props) {
                                 style={{ padding: "0px 40px" }}
                             />
                             <Table
-                                columns={colAwayHome}
+                                columns={colHomeHome}
                                 dataSource={Object.values(stats)}
                                 bordered={true}
                                 pagination={false}
@@ -954,7 +973,7 @@ export default function Compare(props) {
                                 style={{ padding: "0px 40px" }}
                             />
                             <Table
-                                columns={colHomeHome}
+                                columns={colAwayHome}
                                 dataSource={Object.values(stats)}
                                 bordered={true}
                                 pagination={false}
@@ -1002,58 +1021,60 @@ async function getStats(gameId) {
 
 // API FIRST GAMES
 async function getFirstGames(teamId) {
-    return await fetch(`https://webws.365scores.com/web/games/results/?appTypeId=5&langId=29&timezoneName=America/Mexico_City&userCountryId=31&competitors=${teamId}&showOdds=true&includeTopBettingOpportunity=1&topBookmaker=14`)
+    return await fetch(`https://webws.365scores.com/web/games/results/?appTypeId=5&langId=10&timezoneName=America/Mexico_City&userCountryId=31&competitors=${teamId}&showOdds=true&includeTopBettingOpportunity=1&topBookmaker=14`)
         .then(async response => await response.json());
 }
 
 
-async function getNextGames(teamId, lastGameId) {
-    return await fetch(`https://webws.365scores.com/web/games/?langId=29&timezoneId=79&userCountryId=31&apptype=5&competitors=${teamId}&games=1&aftergame=${lastGameId}&direction=-1&withmainodds=true`)
-        .then(async response => await response.json());
-}
+// async function getNextGames(teamId, lastGameId) {
+//     return await fetch(`https://webws.365scores.com/web/games/?langId=29&timezoneId=79&userCountryId=31&apptype=5&competitors=${teamId}&games=1&aftergame=${lastGameId}&direction=-1&withmainodds=true`)
+//         .then(async response => await response.json());
+// }
 
 // Obtener API Games
-async function addNextGames(teamId, lastGameId, seasonNum, firstResponse) {
-    await getNextGames(teamId, lastGameId).then(async (response) => {
-        // const lastIndex = response.games.length - 1;
-        let hasGame = false;
-        await response.games.forEach(game => {
-            if (game.seasonNum === seasonNum) {
-                if (game.id < lastGameId) {
-                    lastGameId = game.id;
-                }
-                firstResponse.games.push(game);
-            }
-        });
-        if (hasGame) {
-            await new Promise(async resolve => setTimeout(resolve, 300));
-            await addNextGames(teamId, lastGameId, seasonNum, firstResponse);
-        }
-    });
-    return firstResponse;
-}
+// async function addNextGames(teamId, lastGameId, seasonNum, firstResponse) {
+//     await getNextGames(teamId, lastGameId).then(async (response) => {
+//         // const lastIndex = response.games.length - 1;
+//         let hasGame = false;
+//         await response.games.forEach(game => {
+//             if (game.seasonNum === seasonNum) {
+//                 if (game.id < lastGameId) {
+//                     lastGameId = game.id;
+//                 }
+//                 firstResponse.games.push(game);
+//             }
+//         });
+//         if (hasGame) {
+//             await new Promise(async resolve => setTimeout(resolve, 300));
+//             await addNextGames(teamId, lastGameId, seasonNum, firstResponse);
+//         }
+//     });
+//     return firstResponse;
+// }
 
 async function getGames(team, stats, teamNum, competitionId, seasonNum) {
-    let lastGameId;
-    await getFirstGames(team.id).then(async firstResponse => {
+    // let lastGameId;
+    await getFirstGames(team.id).then(async response => {
+        // Filtramos solo los games de la season
+        response.games = response.games.filter(game => game.seasonNum === seasonNum && game.gameTime !== -1);
         // Obtenemos el last gameId
-        lastGameId = firstResponse.games[firstResponse.games.length - 1].id;
+        // lastGameId = response.games[response.games.length - 1].id;
         // Agregar los Juegos faltantes
-        await addNextGames(team.id, lastGameId, seasonNum, firstResponse).then(async response => {
-            console.log(response);
-            // Llenamos el arreglo de games
-            setGames(team, stats, teamNum, competitionId, seasonNum, response.games);
-            // Obtenemos las stats con el API
-            const responseData = [];
-            await team.games.reduce(async function (promise, game) {
-                return await promise.then(async function () {
-                    return await Promise.all([
-                        responseData.push(await getStats(game.id)),
-                        await delay(300)
-                    ]);
-                });
-            }, Promise.resolve()).then(_ => setGameStats(team, stats, teamNum, responseData));
-        });
+        // await addNextGames(team.id, lastGameId, seasonNum, response).then(async fullResponse => {
+        // Llenamos el arreglo de games
+        response.games = response.games.slice(0, 12);
+        setGames(team, stats, teamNum, competitionId, seasonNum, response.games);
+        // Obtenemos las stats con el API
+        const responseData = [];
+        await team.games.reduce(async function (promise, game) {
+            return await promise.then(async function () {
+                return await Promise.all([
+                    responseData.push(await getStats(game.id)),
+                    await delay(300)
+                ]);
+            });
+        }, Promise.resolve()).then(_ => setGameStats(team, stats, teamNum, responseData));
+        // });
     });
 }
 

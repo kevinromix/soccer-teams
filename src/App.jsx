@@ -32,7 +32,7 @@ export default function App() {
             <Compare competitionId={competitionId} competition={competition} />
           }
         />
-         <Route
+        <Route
           path={"/:customPath/equipo"}
           element={
             <Equipo competitionId={competitionId} competition={competition} />
@@ -72,7 +72,7 @@ function Home() {
             <ul>
               {
                 ligas.map(liga => {
-                  return <li>
+                  return <li key={liga.competitionId}>
                     <Link
                       to={`${liga.path}`}
                     >
@@ -103,19 +103,19 @@ function NoMatch() {
 
 const ligas = [
   {
-    competitionId: 25,
-    competition: 'Bundesliga',
-    path: 'bundesliga',
-  },
-  {
     competitionId: 7,
     competition: 'Premier League',
     path: 'premier-league',
   },
   {
-    competitionId: 35,
-    competition: 'Ligue 1',
-    path: 'ligue-1',
+    competitionId: 25,
+    competition: 'Bundesliga',
+    path: 'bundesliga',
+  },
+  {
+    competitionId: 11,
+    competition: 'La Liga',
+    path: 'la-liga',
   },
   {
     competitionId: 17,
@@ -123,9 +123,9 @@ const ligas = [
     path: 'serie-a',
   },
   {
-    competitionId: 11,
-    competition: 'La Liga',
-    path: 'la-liga',
+    competitionId: 35,
+    competition: 'Ligue 1',
+    path: 'ligue-1',
   },
   {
     competitionId: 141,
@@ -146,6 +146,11 @@ const ligas = [
     competitionId: 111,
     competition: 'Bundesliga Austrica',
     path: 'bundesliga-aus',
+  },
+  {
+    competitionId: 7143,
+    competition: 'Liga MX Femenil',
+    path: 'liga-mx-femenil',
   },
 ];
 

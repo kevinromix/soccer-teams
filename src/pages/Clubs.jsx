@@ -202,6 +202,11 @@ export default function Clubs(props) {
             style={{ color: "#333", width: "100%", height: "100%" }}
             to={opc === 2 ? `/${customPath}/equipo` : null}
             onClick={() => {
+              console.log("team:" + record.club);
+              console.log("id:" + record.id);
+              console.log("seasonNum:" + seasonNum);
+              console.log("competitionId:" + competitionId);
+
               let _team =
               {
                 id: record.id,
