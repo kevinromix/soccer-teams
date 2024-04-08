@@ -45,23 +45,28 @@ export default function Compare(props) {
     let customKeys = [
         {
             key: 'TotalTotal',
-            label: 'TotalTotal:'
+            label: 'TotalTotal:',
+            class: 'total'
         },
         {
             key: 'HomeAway',
-            label: 'HomeAway:'
+            label: 'HomeAway:',
+            class: 'home'
         },
         {
             key: 'AwayHome',
-            label: 'AwayHome:'
+            label: 'AwayHome:',
+            class: 'away'
         },
         {
             key: 'HomeHome',
-            label: 'HomeHome:'
+            label: 'HomeHome:',
+            class: 'home'
         },
         {
             key: 'AwayAway',
-            label: 'AwayAway:'
+            label: 'AwayAway:',
+            class: 'away'
         },
     ];
 
@@ -72,7 +77,7 @@ export default function Compare(props) {
             width: 100,
             render: (text, record) => {
                 return (
-                    <Row className={`marcador`} >
+                    <Row className={record.class}>
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -81,7 +86,7 @@ export default function Compare(props) {
     ].concat(
         {
             title: () => {
-                return <div>{'Team1'}</div>
+                return <div className='equipo'>{'Team1'}</div>
             },
             width: 75,
             render: (record) => {
@@ -110,7 +115,7 @@ export default function Compare(props) {
         },
         {
             title: () => {
-                return <div>{'Team2'}</div>
+                return <div className='rival'>{'Team2'}</div>
             },
             width: 75,
             render: (record) => {
@@ -139,7 +144,7 @@ export default function Compare(props) {
         },
         {
             title: () => {
-                return <div>{'Avg'}</div>
+                return <div className='total'>{'Avg'}</div>
             },
             width: 75,
             render: (record) => {
@@ -188,7 +193,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'}>
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'}>
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -309,7 +314,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'} >
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'} >
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -321,7 +326,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'}>
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'}>
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -340,7 +345,7 @@ export default function Compare(props) {
                         let icon = '🟰';
                         if (avgTeam1 !== avgTeam2) {
                             if (!record.isDiff) {
-                                const tenPercent = avgTeam1 * 0.10;
+                                const tenPercent = avgTeam1 * 0.13;
                                 avgTeam2 += tenPercent;
                                 if (avgTeam1 > avgTeam2) {
                                     icon = '✅';
@@ -348,7 +353,7 @@ export default function Compare(props) {
                                     icon = '❌';
                                 }
                             } else {
-                                const tenPercent = avgTeam1 * 0.10;
+                                const tenPercent = avgTeam1 * 0.13;
                                 avgTeam1 += tenPercent;
                                 if (avgTeam1 < avgTeam2) {
                                     icon = '✅';
@@ -421,7 +426,7 @@ export default function Compare(props) {
                         let icon = '🟰';
                         if (avgTeam2 !== avgTeam1) {
                             if (!record.isDiff) {
-                                const tenPercent = avgTeam1 * 0.10;
+                                const tenPercent = avgTeam1 * 0.13;
                                 avgTeam2 += tenPercent;
                                 if (avgTeam2 > avgTeam1) {
                                     icon = '✅';
@@ -429,7 +434,7 @@ export default function Compare(props) {
                                     icon = '❌';
                                 }
                             } else {
-                                const tenPercent = avgTeam1 * 0.10;
+                                const tenPercent = avgTeam1 * 0.13;
                                 avgTeam1 += tenPercent;
                                 if (avgTeam2 < avgTeam1) {
                                     icon = '✅';
@@ -450,7 +455,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'} >
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'} >
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -462,7 +467,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'}>
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'}>
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -595,7 +600,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'}>
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'}>
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -716,7 +721,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'} >
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'} >
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -728,7 +733,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'}>
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'}>
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -849,7 +854,7 @@ export default function Compare(props) {
         {
             render: (_, record) => {
                 return (
-                    <Row className={record.esEquipo ? 'equipo marcador' : 'rival marcador'} >
+                    <Row className={record.esEquipo ? 'equipo' : 'rival'} >
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -940,7 +945,7 @@ export default function Compare(props) {
                                 size='small'
                                 scroll={{ x: 0 }}
                                 style={{ padding: "30px 40px 0px 40px" }}
-                                rowClassName={record => record.key.includes('home') ? 'home' : record.key.includes('away') ? 'away' : 'total'}
+                                rowClassName={record => record.class}
                             />
                         </Row>
                         <br />
@@ -952,7 +957,7 @@ export default function Compare(props) {
                                 pagination={false}
                                 size='small'
                                 scroll={{ x: 0 }}
-                                style={{ padding: "0px 40px", marginLeft: '355px' }}
+                                style={{ padding: "0px 40px", marginLeft: '665px' }}
                             />
                             <Table
                                 columns={colHomeAway}

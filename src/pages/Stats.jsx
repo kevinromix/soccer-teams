@@ -86,7 +86,6 @@ export default function Stats() {
                         return (
                             <Card className='customCard equipo'
                                 onClick={showModalGoles}
-                                style={{ fontSize: 12 }}
                             >
                                 <span>Goles</span>
                             </Card>
@@ -116,25 +115,23 @@ export default function Stats() {
     const columns = [
         {
             title: <Card
-                className={`customCard`}
+                className={`customCard teamName`}
                 onClick={
                     () => showModalLineups()
                 }
             >
                 <Row
                     gutter={[10, 0]}
-                    // justify='center'
+                    justify='center'
                     align='middle'
                     style={{
+                        color: '#ededed',
                         position: 'sticky',
                         left: '570px',
                         width: '500px'
                     }}>
                     <Col>
-                        <b style={{
-                            fontSize: '15px'
-                        }}
-                        >
+                        <b>
                             {team.name}
                         </b>
                     </Col>
@@ -159,7 +156,7 @@ export default function Stats() {
                             <Card className={`${record.resultado} customCard marcador`}
                                 onClick={() => showModalLineup(record.key)}
                             >
-                                <Row justify='center' style={{ fontSize: 13 }}>
+                                <Row justify='center'>
                                     <span>{text}</span>
                                 </Row>
                             </Card>
@@ -183,7 +180,7 @@ export default function Stats() {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -197,7 +194,7 @@ export default function Stats() {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -211,7 +208,7 @@ export default function Stats() {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -225,7 +222,7 @@ export default function Stats() {
                     fixed: 'left',
                     render: (text, _) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );

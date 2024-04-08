@@ -139,7 +139,7 @@ export default function ModalPlayer(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador' >
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -153,7 +153,7 @@ export default function ModalPlayer(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador' >
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -172,7 +172,7 @@ export default function ModalPlayer(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador' >
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -186,7 +186,7 @@ export default function ModalPlayer(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador' >
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -547,7 +547,7 @@ export default function ModalPlayer(props) {
 
     return (
         <>
-            <div style={{ background: "#fff" }}>
+            <div>
                 <Avatar
                     size={54}
                     src={`https://imagecache.365scores.com/image/upload/f_png,w_32,h_32,c_limit,q_auto:eco,dpr_3,d_Athletes:default.png,r_max,c_thumb,g_face,z_0.65/v5/Athletes/${playerProfile.athleteId}`}

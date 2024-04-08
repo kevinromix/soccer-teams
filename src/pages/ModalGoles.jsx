@@ -69,7 +69,7 @@ export default function ModalGoles(props) {
             width: 100,
             render: (text, record) => {
                 return (
-                    <Row className={`marcador`} >
+                    <Row>
                         <span>{record.label}</span>
                     </Row>
                 );
@@ -118,9 +118,9 @@ export default function ModalGoles(props) {
 
     const columns = [
         {
-            title: <Row gutter={[10, 0]} justify="center" align='middle'>
+            title: <Row gutter={[10, 0]} justify="center" align='middle' className='teamName'>
                 <Col>
-                    <b style={{ fontSize: '15px' }}>{team.name}</b>
+                    <b>{team.name}</b>
                 </Col>
                 <Col>
                     <Avatar
@@ -142,7 +142,7 @@ export default function ModalGoles(props) {
                             <Card className={`${record.resultado} customCard marcador`}
                                 onClick={() => showModalLineup(record.key)}
                             >
-                                <Row justify='center' style={{ fontSize: 13 }}>
+                                <Row justify='center'>
                                     <span>{text}</span>
                                 </Row>
                             </Card>
@@ -166,7 +166,7 @@ export default function ModalGoles(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -180,7 +180,7 @@ export default function ModalGoles(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -194,7 +194,7 @@ export default function ModalGoles(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -208,7 +208,7 @@ export default function ModalGoles(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -393,7 +393,7 @@ export default function ModalGoles(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -407,7 +407,7 @@ export default function ModalGoles(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -426,7 +426,7 @@ export default function ModalGoles(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -440,7 +440,7 @@ export default function ModalGoles(props) {
                     fixed: 'left',
                     render: (text, record) => {
                         return (
-                            <Row className='marcador'>
+                            <Row>
                                 <span>{text}</span>
                             </Row>
                         );
@@ -501,7 +501,7 @@ export default function ModalGoles(props) {
                 />
             </Row>
             <br />
-            <Row gutter={[10, 0]} align='middle'>
+            <Row gutter={[10, 0]} align='middle' style={{ color: '#fff' }}>
                 <Col>
                     <b>GOLES DE PENAL A FAVOR:</b>
                 </Col>
@@ -521,7 +521,7 @@ export default function ModalGoles(props) {
                     <span>{(team.forGolesDePenal + team.againstGolesDePenal)}</span>
                 </Col>
             </Row>
-            <Row gutter={[10, 0]} align='middle'>
+            <Row gutter={[10, 0]} align='middle' style={{ color: '#fff' }}>
                 <Col>
                     <b>GOLES A FAVOR A/M:</b>
                 </Col>
@@ -541,7 +541,7 @@ export default function ModalGoles(props) {
                     <span>{(team.forGolesBefore45 + team.againstGolesBefore45)}</span>
                 </Col>
             </Row>
-            <Row gutter={[10, 0]} align='middle'>
+            <Row gutter={[10, 0]} align='middle' style={{ color: '#fff' }}>
                 <Col>
                     <b>GOLES A FAVOR D/M:</b>
                 </Col>
@@ -561,7 +561,7 @@ export default function ModalGoles(props) {
                     <span>{(team.forGolesAfter45 + team.againstGolesAfter45)}</span>
                 </Col>
             </Row>
-            <Row gutter={[38, 0]}>
+            <Row gutter={[38, 0]} style={{ color: '#fff' }}>
                 <Col>
                     <h2>GOLES</h2>
                     <Collapse
@@ -571,10 +571,11 @@ export default function ModalGoles(props) {
                             team.scorerPlayers.map((record, index) => {
                                 return {
                                     key: index,
-                                    label: <Flex justify='space-between' align='center'>
+                                    label: <Flex justify='space-between' align='center' style={{ color: '#fff' }}>
                                         <div style={{ paddingRight: "30px" }}>
                                             <Avatar
-                                                size={48}
+                                                style={{ marginRight: "10px" }}
+                                                size={57}
                                                 src={`https://imagecache.365scores.com/image/upload/f_png,w_32,h_32,c_limit,q_auto:eco,dpr_3,d_Athletes:default.png,r_max,c_thumb,g_face,z_0.65/v5/Athletes/${record.athleteId}`}
                                             />
                                             <span>{record.name}</span>
@@ -605,10 +606,11 @@ export default function ModalGoles(props) {
                             team.assistPlayers.map((record, index) => {
                                 return {
                                     key: index,
-                                    label: <Flex justify='space-between' align='center'>
+                                    label: <Flex justify='space-between' align='center' style={{ color: '#fff' }}>
                                         <div style={{ paddingRight: "30px" }}>
                                             <Avatar
-                                                size={48}
+                                                style={{ marginRight: "10px" }}
+                                                size={57}
                                                 src={`https://imagecache.365scores.com/image/upload/f_png,w_32,h_32,c_limit,q_auto:eco,dpr_3,d_Athletes:default.png,r_max,c_thumb,g_face,z_0.65/v5/Athletes/${record.athleteId}`}
                                             />
                                             <span>{record.name}</span>

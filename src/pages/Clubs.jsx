@@ -148,11 +148,7 @@ export default function Clubs(props) {
       </div>
     ),
     filterIcon: (filtered) => (
-      <SearchOutlined
-        style={{
-          color: filtered ? '#1677ff' : undefined,
-        }}
-      />
+      <SearchOutlined />
     ),
     onFilter: (value, record) =>
       record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
@@ -199,7 +195,7 @@ export default function Clubs(props) {
           <Link
             type='link'
             target={opc === 2 ? "_blank" : null}
-            style={{ color: "#333", width: "100%", height: "100%" }}
+            style={{ color: "#ededed", width: "100%", height: "100%" }}
             to={opc === 2 ? `/${customPath}/equipo` : null}
             onClick={() => {
               console.log("team:" + record.club);
@@ -401,17 +397,16 @@ export default function Clubs(props) {
   return (
     <>
       <Row justify="center">
-        {/* <h2 style={{ color: '#fff' }}>{state.club}</h2> */}
         <Breadcrumb
           style={{ margin: "12px 0px 18px 0px" }}
           items={[
             {
-              title: <a style={{ color: '#fff' }} href="/">Ligas</a>,
+              title: <a
+                style={{ color: '#fff' }} href="/">Ligas</a>,
 
             },
             {
-              title: <a style={{ color: '#fff' }}
-                href={"/" + customPath}>{competition}
+              title: <a style={{ color: '#fff' }} href={"/" + customPath}>{competition}
               </a>,
             },
           ]}
@@ -470,6 +465,8 @@ export default function Clubs(props) {
                   localStorage.setItem("seasonNum", seasonNum);
                   localStorage.setItem("team1", JSON.stringify(team1));
                   localStorage.setItem("team2", JSON.stringify(team2));
+                  setTeam1({ id: -1, name: '' })
+                  setTeam2({ id: -1, name: '' })
                 }}
               >
                 <Button
@@ -492,6 +489,7 @@ export default function Clubs(props) {
           bordered={true}
           size='small'
           style={{ width: 820 }}
+          className='customTable'
           rowClassName={record => team1.id === record.id ? 'ant-table-row-selected' : team2.id === record.id ? 'ant-table-row-selected2' : ''}
           sticky
         />

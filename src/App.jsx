@@ -61,12 +61,12 @@ function Home() {
           height: 64,
           paddingInline: 60,
           lineHeight: '64px',
-          backgroundColor: '#7dbcea',
         }}>Ligas de fútbol</Layout.Header>
         <Layout.Content style={{
           textAlign: 'center',
           lineHeight: '55px',
-          color: '#fff',
+          backgroundColor: "#304b5d",
+          color: '#304b5d',
         }}>
           <nav style={{ width: 400, margin: '100px auto' }}>
             <ul>
@@ -74,6 +74,7 @@ function Home() {
                 ligas.map(liga => {
                   return <li key={liga.competitionId}>
                     <Link
+                      style={{ color: '#fff' }}
                       to={`${liga.path}`}
                     >
                       <span>{liga.competition}</span>

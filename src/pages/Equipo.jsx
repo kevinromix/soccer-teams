@@ -34,8 +34,6 @@ export default function Equipo(props) {
         <div>
             <Row justify='center' align='middle' gutter={[10, 0]}
                 style={{
-                    backgroundColor: '#304b5d',
-                    color: '#fff',
                     paddingTop: '15px',
                 }}>
                 <Col>

@@ -1,0 +1,217 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #304b5d;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.ant-table-tbody .ant-table-row.ant-table-row-selected>.ant-table-cell {
+  background-color: #70c98a !important;
+}
+
+.ant-table-tbody .ant-table-row.ant-table-row-selected2>.ant-table-cell {
+  background-color: #ff9c54 !important;
+}
+
+.ant-radio-wrapper .ant-radio-checked .ant-radio-inner {
+  background-color: #c0c0c0;
+}
+
+.ant-modal .ant-modal-content {
+  background-color: #757575 !important;
+}
+
+Table thead tr td {
+  background-color: #757575 !important;
+}
+
+Table thead tr th {
+  color: #ededed !important;
+  font-weight: 900 !important;
+  background-color: #e47542 !important;
+}
+
+tbody>tr>th {
+  color: #ededed !important;
+  font-weight: 900 !important;
+}
+
+tbody {
+  color: #ededed !important;
+  font-weight: 900;
+}
+
+tbody tr.total .ant-table-cell {
+  background-color: #d0d0d0 !important;
+}
+
+tbody tr.total .ant-table-cell {
+  background-color: #d2d2d2 !important;
+}
+
+tbody tr.home .ant-table-cell {
+  /* background-color: #c1d3de !important; */
+  /* background-color: rgb(57, 117, 165) !important */
+  background-color: #757575 !important;
+}
+
+tbody tr.away .ant-table-cell {
+  /* background-color: #d4c6df !important; */
+  /* background-color: rgb(228, 117, 66) !important; */
+  background-color: #4b5d75 !important;
+}
+
+tr .ant-table-cell:has(div.victoria) {
+  background-color: #5da575 !important;
+}
+
+tr .ant-table-cell:has(div.empate) {
+  background-color: #a5a5a5 !important;
+}
+
+tr .ant-table-cell:has(div.derrota) {
+  background-color: #c04b4b !important;
+}
+
+tr .ant-table-cell:has(div.equipo) {
+  background-color: #5da575 !important;
+}
+
+tr .ant-table-cell:has(div.rival) {
+  background-color: #c04b4b !important;
+}
+
+tr .ant-table-cell:has(div.total) {
+  background-color: #d2d2d2 !important;
+}
+
+tr .ant-table-cell:has(div.home) {
+  background-color: #c1d3de !important;
+}
+
+tr .ant-table-cell:has(div.away) {
+  /* background-color: #dfc6dc !important; */
+  background-color: #d4c6df !important;
+
+}
+
+th.ant-table-cell:has(div.equipo) {
+  background-color: #d9ead3;
+}
+
+th.ant-table-cell:has(div.rival) {
+  background-color: #f4cccc;
+}
+
+th.ant-table-cell:has(div.total) {
+  background-color: #e4e4e4;
+}
+
+th.ant-table-cell:has(div.home) {
+  background-color: #cfe2f3 !important;
+}
+
+th.ant-table-cell:has(div.away) {
+  background-color: #fff2cc;
+}
+
+.ant-table-wrapper .ant-table {
+  line-height: 14px;
+}
+
+/* Table head */
+Table thead tr th {
+  font-size: 12px;
+  justify-content: center;
+}
+
+/* Table head */
+Table thead tr th div {
+  text-align: center;
+}
+
+/* Valores de la tabla */
+.ant-table-wrapper .ant-table-tbody>tr>th {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+/* Scroll */
+::-webkit-scrollbar {
+  -webkit-appearance: none;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: rgba(0, 0, 0, .4);
+  -webkit-box-shadow: 0 0 1px #ffffff80;
+}
+
+th:has(div.none) {
+  padding: 0px !important;
+}
+
+tbody:has(tr.rotated) {
+  transform: rotate(180deg);
+}
+
+.rotated th {
+  transform: rotate(180deg);
+}
+
+.customCard {
+  background: none;
+  box-shadow: none;
+  border: none;
+  border-radius: 0px;
+}
+
+.customCard .ant-card-body {
+  padding: 8px;
+}
+
+th.ant-table-cell:has(div.customCard) {
+  padding: 0px !important;
+}
+
+.ant-table-bordered:has(tr.backgroundLocal) {
+  border-radius: 0px !important;
+}
+
+.ant-table-bordered:has(tr.backgroundVisita) {
+  border-radius: 0px !important;
+}
+
+.ant-image:has(img.arbitro) {
+  display: contents;
+  width: 10px;
+}
+
+.ant-image img.arbitro {
+  width: 32px;
+}
+
+:where(.css-dev-only-do-not-override-pr0fja).ant-avatar>img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain !important;
+}
+
+tbody tr.backgroundLocal .ant-table-cell {
+  background-color: #6fc88a80 !important;
+}
+
+
+tbody tr.backgroundVisita .ant-table-cell {
+  background-color: #e4e4e4 !important;
+}

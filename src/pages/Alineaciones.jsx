@@ -437,7 +437,7 @@ export default function Alineaciones(props) {
                                     <h3>Jornada {jornada.key}</h3>
                                 </Col>
                                 <Col>
-                                    <h3 style={{ color: '#6fc88a' }}>{jornada.local}</h3>
+                                    <h3>{jornada.local}</h3>
                                 </Col>
                                 <Col>
                                     <h3>{jornada.golesLocal}</h3>
@@ -449,7 +449,7 @@ export default function Alineaciones(props) {
                                     <h3>{jornada.golesVisitante}</h3>
                                 </Col>
                                 <Col>
-                                    <h3 style={{ color: '#797979' }}>{jornada.visitante}</h3>
+                                    <h3>{jornada.visitante}</h3>
                                 </Col>
                             </Row>
                             <Row justify='center'>

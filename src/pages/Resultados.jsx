@@ -112,14 +112,14 @@ export default function Resultados(props) {
             </Affix>
             <Row
                 wrap={false}
-                justify='space-around'
+                justify='space-evenly'
                 align='top'
                 style={{
                     overflow: 'scroll',
                     padding: '30px 40px',
                 }}
             >
-                <Row gutter={[0, 30]} style={{ width: 700 }}>
+                <Row gutter={[0, 30]} style={{ width: 920 }}>
                     <Col>
                         <Table
                             columns={columnsAvg}
