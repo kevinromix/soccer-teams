@@ -345,16 +345,12 @@ export default function Compare(props) {
                         let icon = '🟰';
                         if (avgTeam1 !== avgTeam2) {
                             if (!record.isDiff) {
-                                const tenPercent = avgTeam1 * 0.13;
-                                avgTeam2 += tenPercent;
                                 if (avgTeam1 > avgTeam2) {
                                     icon = '✅';
                                 } else {
                                     icon = '❌';
                                 }
                             } else {
-                                const tenPercent = avgTeam1 * 0.13;
-                                avgTeam1 += tenPercent;
                                 if (avgTeam1 < avgTeam2) {
                                     icon = '✅';
                                 } else {
@@ -426,16 +422,12 @@ export default function Compare(props) {
                         let icon = '🟰';
                         if (avgTeam2 !== avgTeam1) {
                             if (!record.isDiff) {
-                                const tenPercent = avgTeam1 * 0.13;
-                                avgTeam2 += tenPercent;
                                 if (avgTeam2 > avgTeam1) {
                                     icon = '✅';
                                 } else {
                                     icon = '❌';
                                 }
                             } else {
-                                const tenPercent = avgTeam1 * 0.13;
-                                avgTeam1 += tenPercent;
                                 if (avgTeam2 < avgTeam1) {
                                     icon = '✅';
                                 } else {
@@ -1011,7 +1003,8 @@ async function delay(t) {
 
 // API GameStats
 async function getStats(gameId) {
-    return await fetch(`https://webws.365scores.com/web/game/?appTypeId=5&langId=29&timezoneName=America/Mexico_City&userCountryId=31&gameId=${gameId}&topBookmaker=14`).then(async response => await response.json());
+    // return await fetch(`https://webws.365scores.com/web/game/?appTypeId=5&langId=29&timezoneName=America/Mexico_City&userCountryId=31&gameId=${gameId}&topBookmaker=14`).then(async response => await response.json());
+    return await fetch(`https://webws.365scores.com/web/game/stats/?appTypeId=5&langId=29&timezoneName=America/Mexico_City&userCountryId=31&games=${gameId}`).then(async response => await response.json());
 }
 
 
@@ -1067,7 +1060,7 @@ async function getGames(team, stats, teamNum, competitionId, seasonNum) {
         // Agregar los Juegos faltantes
         // await addNextGames(team.id, lastGameId, seasonNum, response).then(async fullResponse => {
         // Llenamos el arreglo de games
-        response.games = response.games.slice(0, 12);
+        response.games = response.games.slice(0, 14);
         setGames(team, stats, teamNum, competitionId, seasonNum, response.games);
         // Obtenemos las stats con el API
         const responseData = [];
@@ -1183,59 +1176,62 @@ function setGameStats(team, data, teamNum, response) {
     team.forGolesAfter45 = 0;
     team.againstGolesAfter45 = 0;
     response?.forEach((result) => {
-        const index = team.games.findIndex(g => g.id === parseInt(result.game?.id));
-        const homeCompetitor = result.game.homeCompetitor;
-        const awayCompetitor = result.game.awayCompetitor;
+        const index = team.games.findIndex(g => g.id === parseInt(result.games[0]?.id));
+        const homeCompetitor = result.games[0].homeCompetitor;
+        const awayCompetitor = result.games[0].awayCompetitor;
         const esLocal = team.games[index].esLocal;
         team.games[index].goles = [];
         team.games[index].tarjetasAmarillas = [];
         team.games[index].tarjetasRojas = [];
         // GAME STATS
+        setData(
+            team.games[index],
+            result.statistics,
+            data,
+            teamNum,
+            esLocal,
+            team.id,
+        );
         if (esLocal) {
-            const hoa = `home`;
-            setData(
-                team.games[index],
-                homeCompetitor.statistics,
-                homeCompetitor.score,
-                data,
-                teamNum,
-                hoa,
-                true,
-            );
-            setData(
-                team.games[index],
-                awayCompetitor.statistics,
-                awayCompetitor.score,
-                data,
-                teamNum,
-                hoa,
-                false,
-            );
+            // GOLES EQUIPO
+            team.games[index].stats['Goles'] = homeCompetitor.score;
+            data['Goles'][`team${teamNum}`].total += homeCompetitor.score;
+            data['Goles'][`team${teamNum}`][`home`] += homeCompetitor.score;
+            // GOLES RIVAL
+            team.games[index].stats['GolesR'] = awayCompetitor.score;
+            data['GolesR'][`team${teamNum}`].total += awayCompetitor.score;
+            data['GolesR'][`team${teamNum}`][`home`] += awayCompetitor.score;
+            // PRECISIÓN EQUIPO
+            team.games[index].stats['Precisión'] = parseFloat((team.games[index].stats['Pases completados'] / team.games[index].stats['Total de pases'] * 100).toFixed(2));
+            data['Precisión'][`team${teamNum}`].total = parseFloat((data['Precisión'][`team${teamNum}`].total + (data['Pases completados'][`team${teamNum}`].total / data['Total de pases'][`team${teamNum}`].total * 100)).toFixed(2));
+            data['Precisión'][`team${teamNum}`][`home`] = parseFloat((data['Precisión'][`team${teamNum}`][`home`] + (data['Pases completados'][`team${teamNum}`][`home`] / data['Total de pases'][`team${teamNum}`][`home`] * 100)).toFixed(2));
+            // PRECISIÓN RIVAL
+            team.games[index].stats['PrecisiónR'] = parseFloat((team.games[index].stats['Pases completadosR'] / team.games[index].stats['Total de pasesR'] * 100).toFixed(2));
+            data['PrecisiónR'][`team${teamNum}`].total = parseFloat((data['PrecisiónR'][`team${teamNum}`].total + (data['Pases completadosR'][`team${teamNum}`].total / data['Total de pasesR'][`team${teamNum}`].total * 100)).toFixed(2));
+            data['PrecisiónR'][`team${teamNum}`][`home`] = parseFloat((data['PrecisiónR'][`team${teamNum}`][`home`] + (data['Pases completadosR'][`team${teamNum}`][`home`] / data['Total de pasesR'][`team${teamNum}`][`home`] * 100)).toFixed(2));
             // DIFERENCIA
             const diferencia = homeCompetitor.score - awayCompetitor.score;
             team.games[index].stats['Diferencia'] = diferencia;
         } else {
-            const hoa = `away`;
-            setData(
-                team.games[index],
-                awayCompetitor.statistics,
-                awayCompetitor.score,
-                data,
-                teamNum,
-                hoa,
-                true,
-            );
-            setData(
-                team.games[index],
-                homeCompetitor.statistics,
-                homeCompetitor.score,
-                data,
-                teamNum,
-                hoa,
-                false,
-            );
+            // GOLES EQUIPO
+            team.games[index].stats['Goles'] = awayCompetitor.score;
+            data['Goles'][`team${teamNum}`].total += awayCompetitor.score;
+            data['Goles'][`team${teamNum}`][`away`] += awayCompetitor.score;
+            // GOLES RIVAL
+            team.games[index].stats['GolesR'] = homeCompetitor.score;
+            data['GolesR'][`team${teamNum}`].total += homeCompetitor.score;
+            data['GolesR'][`team${teamNum}`][`away`] += homeCompetitor.score;
+            // PRECISIÓN EQUIPO
+            team.games[index].stats['Precisión'] = parseFloat((team.games[index].stats['Pases completados'] / team.games[index].stats['Total de pases'] * 100).toFixed(2));
+            data['Precisión'][`team${teamNum}`].total = parseFloat((data['Precisión'][`team${teamNum}`].total + (data['Pases completados'][`team${teamNum}`].total / data['Total de pases'][`team${teamNum}`].total * 100)).toFixed(2));
+            data['Precisión'][`team${teamNum}`][`away`] = parseFloat((data['Precisión'][`team${teamNum}`][`away`] + (data['Pases completados'][`team${teamNum}`][`away`] / data['Total de pases'][`team${teamNum}`][`away`] * 100)).toFixed(2));
+            // PRECISIÓN RIVAL
+            team.games[index].stats['PrecisiónR'] = parseFloat((team.games[index].stats['Pases completadosR'] / team.games[index].stats['Total de pasesR'] * 100).toFixed(2));
+            data['PrecisiónR'][`team${teamNum}`].total = parseFloat((data['PrecisiónR'][`team${teamNum}`].total + (data['Pases completadosR'][`team${teamNum}`].total / data['Total de pasesR'][`team${teamNum}`].total * 100)).toFixed(2));
+            data['PrecisiónR'][`team${teamNum}`][`away`] = parseFloat((data['PrecisiónR'][`team${teamNum}`][`away`] + (data['Pases completadosR'][`team${teamNum}`][`away`] / data['Total de pasesR'][`team${teamNum}`][`away`] * 100)).toFixed(2));
             // DIFERENCIA
-            team.games[index].stats['Diferencia'] = awayCompetitor.score - homeCompetitor.score;
+            const diferencia = awayCompetitor.score - homeCompetitor.score;
+            team.games[index].stats['Diferencia'] = diferencia;
         }
         // AA
         const isAA = homeCompetitor.score > 0 && awayCompetitor.score > 0;
@@ -1250,172 +1246,158 @@ function setGameStats(team, data, teamNum, response) {
         } else {
             team.games[index].stats['AA'] = 0;
         }
-        const members = result.game.members;
+        // const members = result.game.members;
         // EVENTOS
-        result.game.events?.forEach((event) => {
-            const esEquipo = event.competitorId === team.id;
-            // EVENT GOLES
-            if (event.eventType.id === 1) {
-                const gameTime = parseInt(event.gameTime);
-                team.games[index].goles.push({
-                    competitorId: event.competitorId,
-                    playerId: event.playerId,
-                    gameTime: gameTime,
-                });
-                if (esEquipo) {
-                    let _gol = {
-                        key: team.games[index].key,
-                        jornada: team.games[index].key,
-                        resultado: team.games[index].resultado,
-                        local: team.games[index].local,
-                        golesLocal: team.games[index].golesLocal,
-                        visitante: team.games[index].visitante,
-                        esLocal: esLocal,
-                        golesVisitante: team.games[index].golesVisitante,
-                        gameTime: gameTime,
-                        asistPlayerId: event.extraPlayers !== undefined ? event.extraPlayers[0] : null,
-                    }
-                    let indexGol = team.scorerPlayers.findIndex(player => player.playerId === event.playerId);
-                    if (indexGol !== -1) {
-                        team.scorerPlayers[indexGol].goles.push(_gol);
-                    } else {
-                        const player = members.find(m => m.id === event.playerId);
-                        team.scorerPlayers.push(
-                            {
-                                playerId: player.id,
-                                athleteId: player.athleteId,
-                                name: player.name,
-                                goles: [_gol],
-                            }
-                        )
-                    }
-                }
-                //GOLES DE PENAL
-                if (event.eventType.subTypeId === 3) {
-                    if (esEquipo) {
-                        team.forGolesDePenal++;
-                    } else {
-                        team.againstGolesDePenal++;
-                    }
-                }
-                // BEFORE AFTER MD
-                if (gameTime <= 45) {
-                    if (esEquipo) {
-                        team.forGolesBefore45++;
-                    } else {
-                        team.againstGolesBefore45++;
-                    }
-                } else {
-                    if (esEquipo) {
-                        team.forGolesAfter45++;
-                    } else {
-                        team.againstGolesAfter45++
-                    }
-                }
-                // ASISTENCIAS
-                if (event.extraPlayers !== undefined) {
-                    if (esEquipo) {
-                        let _assistance = {
-                            key: team.games[index].key,
-                            jornada: team.games[index].key,
-                            resultado: team.games[index].resultado,
-                            local: team.games[index].local,
-                            golesLocal: team.games[index].golesLocal,
-                            visitante: team.games[index].visitante,
-                            esLocal: esLocal,
-                            golesVisitante: team.games[index].golesVisitante,
-                            gameTime: gameTime,
-                        }
-                        let indexAssist = team.assistPlayers.findIndex(player => player.playerId === event.extraPlayers[0]);
-                        if (indexAssist !== -1) {
-                            team.assistPlayers[indexAssist].assists.push(_assistance);
-                        } else {
-                            const player = members.find(m => m.id === event.extraPlayers[0]);
-                            if (player !== undefined) {
-                                team.assistPlayers.push(
-                                    {
-                                        playerId: player.id,
-                                        athleteId: player.athleteId,
-                                        name: player.name,
-                                        assists: [_assistance],
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            // EVENT TARJETAS AMARILLAS
-            if (event.eventType.id === 2) {
-                team.games[index].tarjetasAmarillas.push({
-                    competitorId: event.competitorId,
-                    playerId: event.playerId,
-                    gameTime: parseInt(event.gameTime),
-                });
-            }
-            // EVENT TARJETAS ROJAS
-            if (event.eventType.id === 3) {
-                team.games[index].tarjetasRojas.push({
-                    competitorId: event.competitorId,
-                    playerId: event.playerId,
-                    gameTime: parseInt(event.gameTime),
-                });
-            }
-        });
+        // result.game.events?.forEach((event) => {
+        //     const esEquipo = event.competitorId === team.id;
+        //     // EVENT GOLES
+        //     if (event.eventType.id === 1) {
+        //         const gameTime = parseInt(event.gameTime);
+        //         team.games[index].goles.push({
+        //             competitorId: event.competitorId,
+        //             playerId: event.playerId,
+        //             gameTime: gameTime,
+        //         });
+        //         if (esEquipo) {
+        //             let _gol = {
+        //                 key: team.games[index].key,
+        //                 jornada: team.games[index].key,
+        //                 resultado: team.games[index].resultado,
+        //                 local: team.games[index].local,
+        //                 golesLocal: team.games[index].golesLocal,
+        //                 visitante: team.games[index].visitante,
+        //                 esLocal: esLocal,
+        //                 golesVisitante: team.games[index].golesVisitante,
+        //                 gameTime: gameTime,
+        //                 asistPlayerId: event.extraPlayers !== undefined ? event.extraPlayers[0] : null,
+        //             }
+        //             let indexGol = team.scorerPlayers.findIndex(player => player.playerId === event.playerId);
+        //             if (indexGol !== -1) {
+        //                 team.scorerPlayers[indexGol].goles.push(_gol);
+        //             } else {
+        //                 // const player = members.find(m => m.id === event.playerId);
+        //                 // team.scorerPlayers.push(
+        //                 //     {
+        //                 //         playerId: player.id,
+        //                 //         athleteId: player.athleteId,
+        //                 //         name: player.name,
+        //                 //         goles: [_gol],
+        //                 //     }
+        //                 // )
+        //             }
+        //         }
+        //         //GOLES DE PENAL
+        //         if (event.eventType.subTypeId === 3) {
+        //             if (esEquipo) {
+        //                 team.forGolesDePenal++;
+        //             } else {
+        //                 team.againstGolesDePenal++;
+        //             }
+        //         }
+        //         // BEFORE AFTER MD
+        //         if (gameTime <= 45) {
+        //             if (esEquipo) {
+        //                 team.forGolesBefore45++;
+        //             } else {
+        //                 team.againstGolesBefore45++;
+        //             }
+        //         } else {
+        //             if (esEquipo) {
+        //                 team.forGolesAfter45++;
+        //             } else {
+        //                 team.againstGolesAfter45++
+        //             }
+        //         }
+        //         // ASISTENCIAS
+        //         if (event.extraPlayers !== undefined) {
+        //             if (esEquipo) {
+        //                 let _assistance = {
+        //                     key: team.games[index].key,
+        //                     jornada: team.games[index].key,
+        //                     resultado: team.games[index].resultado,
+        //                     local: team.games[index].local,
+        //                     golesLocal: team.games[index].golesLocal,
+        //                     visitante: team.games[index].visitante,
+        //                     esLocal: esLocal,
+        //                     golesVisitante: team.games[index].golesVisitante,
+        //                     gameTime: gameTime,
+        //                 }
+        //                 let indexAssist = team.assistPlayers.findIndex(player => player.playerId === event.extraPlayers[0]);
+        //                 if (indexAssist !== -1) {
+        //                     team.assistPlayers[indexAssist].assists.push(_assistance);
+        //                 } else {
+        //                     // const player = members.find(m => m.id === event.extraPlayers[0]);
+        //                     // if (player !== undefined) {
+        //                     //     team.assistPlayers.push(
+        //                     //         {
+        //                     //             playerId: player.id,
+        //                     //             athleteId: player.athleteId,
+        //                     //             name: player.name,
+        //                     //             assists: [_assistance],
+        //                     //         }
+        //                     //     )
+        //                     // }
+        //                 }
+        //             }
+        //         }
+        //     }
+        //     // EVENT TARJETAS AMARILLAS
+        //     if (event.eventType.id === 2) {
+        //         team.games[index].tarjetasAmarillas.push({
+        //             competitorId: event.competitorId,
+        //             playerId: event.playerId,
+        //             gameTime: parseInt(event.gameTime),
+        //         });
+        //     }
+        //     // EVENT TARJETAS ROJAS
+        //     if (event.eventType.id === 3) {
+        //         team.games[index].tarjetasRojas.push({
+        //             competitorId: event.competitorId,
+        //             playerId: event.playerId,
+        //             gameTime: parseInt(event.gameTime),
+        //         });
+        //     }
+        // });
         // ALINEACION
         team.games[index].homeCompetitor = [];
         team.games[index].awayCompetitor = [];
-        result.game.homeCompetitor.lineups?.members.forEach(member => {
-            team.games[index].homeCompetitor.push(setMemberStats(member, members, team.games[index].tarjetasAmarillas, team.games[index].tarjetasRojas));
-        });
-        result.game.awayCompetitor.lineups?.members.forEach(member => {
-            team.games[index].awayCompetitor.push(setMemberStats(member, members, team.games[index].tarjetasAmarillas, team.games[index].tarjetasRojas));
-        });
+        // result.game.homeCompetitor.lineups?.members.forEach(member => {
+        //     team.games[index].homeCompetitor.push(setMemberStats(member, members, team.games[index].tarjetasAmarillas, team.games[index].tarjetasRojas));
+        // });
+        // result.game.awayCompetitor.lineups?.members.forEach(member => {
+        //     team.games[index].awayCompetitor.push(setMemberStats(member, members, team.games[index].tarjetasAmarillas, team.games[index].tarjetasRojas));
+        // });
     });
 }
 
-function setData(game, stats, score, data, teamNum, hOA, esEquipo) {
+function setData(game, stats, data, teamNum, esLocal, teamId) {
     stats?.forEach((stat) => {
         switch (stat.name) {
             default:
                 if (data.hasOwnProperty(stat.name)) {
                     const value = parseInt(stat.value);
-                    if (esEquipo) {
+                    if (stat.competitorId === teamId) {
                         game.stats[stat.name] = value;
                         data[stat.name][`team${teamNum}`]['total'] += value;
-                        data[stat.name][`team${teamNum}`][`${hOA}`] += value;
+                        if (esLocal) {
+                            data[stat.name][`team${teamNum}`][`home`] += value;
+                        } else {
+                            data[stat.name][`team${teamNum}`][`away`] += value;
+                        }
                     }
-                    else {
-                        if (data[stat.name].hasRStat !== false) {
-                            game.stats[`${stat.name}R`] = value;
-                            data[`${stat.name}R`][`team${teamNum}`]['total'] += value;
-                            data[`${stat.name}R`][`team${teamNum}`][`${hOA}`] += value;
+                    else if (stat.competitorId !== teamId && data[stat.name].hasRStat !== false) {
+                        game.stats[`${stat.name}R`] = value;
+                        data[`${stat.name}R`][`team${teamNum}`]['total'] += value;
+                        if (esLocal) {
+                            data[`${stat.name}R`][`team${teamNum}`][`home`] += value;
+                        } else {
+                            data[`${stat.name}R`][`team${teamNum}`][`away`] += value;
                         }
                     }
                 }
                 break;
         }
     });
-    if (esEquipo) {
-        // Goles
-        game.stats['Goles'] = score;
-        data['Goles'][`team${teamNum}`].total += score;
-        data['Goles'][`team${teamNum}`][`${hOA}`] += score;
-        // Precisión
-        game.stats['Precisión'] = parseFloat((game.stats['Pases completados'] / game.stats['Total de pases'] * 100).toFixed(2));
-        data['Precisión'][`team${teamNum}`].total = parseFloat((data['Precisión'][`team${teamNum}`].total + (data['Pases completados'][`team${teamNum}`].total / data['Total de pases'][`team${teamNum}`].total * 100)).toFixed(2));
-        data['Precisión'][`team${teamNum}`][`${hOA}`] = parseFloat((data['Precisión'][`team${teamNum}`][`${hOA}`] + (data['Pases completados'][`team${teamNum}`][`${hOA}`] / data['Total de pases'][`team${teamNum}`][`${hOA}`] * 100)).toFixed(2));
-    }
-    else {
-        // Goles
-        game.stats['GolesR'] = score;
-        data['GolesR'][`team${teamNum}`].total += score;
-        data['GolesR'][`team${teamNum}`][`${hOA}`] += score;
-        // Precisión
-        game.stats['PrecisiónR'] = parseFloat((game.stats['Pases completadosR'] / game.stats['Total de pasesR'] * 100).toFixed(2));
-        data['PrecisiónR'][`team${teamNum}`].total = parseFloat((data.PrecisiónR[`team${teamNum}`].total + (data['Pases completadosR'][`team${teamNum}`].total / data['Total de pasesR'][`team${teamNum}`].total * 100)).toFixed(2));
-        data['PrecisiónR'][`team${teamNum}`][`${hOA}`] = parseFloat((data.PrecisiónR[`team${teamNum}`][`${hOA}`] + (data['Pases completadosR'][`team${teamNum}`][`${hOA}`] / data['Total de pasesR'][`team${teamNum}`][`${hOA}`] * 100)).toFixed(2));
-    }
 }
 
 function setMemberStats(member, members, tarjetasAmarillas, tarjetasRojas) {
