@@ -27,9 +27,9 @@ export default function Compare(props) {
             let _team1 = team1;
             let _team2 = team2;
             let _stats = initData();
-            await getGames(_team1, _stats, '1', competitionIdT1, seasonNumT1).then(async _ =>
+            await getGames(_team1, _stats, '1', competitionIdT1, seasonNumT1, null).then(async _ =>
                 await new Promise(async resolve => setTimeout(resolve, 300)).then(async _ =>
-                    await getGames(_team2, _stats, '2', competitionIdT2, seasonNumT2).then(_ => {
+                    await getGames(_team2, _stats, '2', competitionIdT2, seasonNumT2, _team1.games.length).then(_ => {
                         setLoading(false);
                         setStats(_stats);
                         setTeam1(_team1);
@@ -1050,7 +1050,7 @@ async function getFirstGames(teamId) {
 //     return firstResponse;
 // }
 
-async function getGames(team, stats, teamNum, competitionId, seasonNum) {
+async function getGames(team, stats, teamNum, competitionId, seasonNum, rivalNumOfGames) {
     // let lastGameId;
     await getFirstGames(team.id).then(async response => {
         // Filtramos solo los games de la season
@@ -1061,7 +1061,7 @@ async function getGames(team, stats, teamNum, competitionId, seasonNum) {
         // await addNextGames(team.id, lastGameId, seasonNum, response).then(async fullResponse => {
         // Llenamos el arreglo de games
         response.games = response.games.slice(0, 14);
-        setGames(team, stats, teamNum, competitionId, seasonNum, response.games);
+        setGames(team, stats, teamNum, competitionId, seasonNum, response.games, rivalNumOfGames);
         // Obtenemos las stats con el API
         const responseData = [];
         await team.games.reduce(async function (promise, game) {
@@ -1077,9 +1077,16 @@ async function getGames(team, stats, teamNum, competitionId, seasonNum) {
 }
 
 // Llenar arreglo games
-function setGames(team, stats, teamNum, competitionId, seasonNum, games) {
+function setGames(team, stats, teamNum, competitionId, seasonNum, games, rivalNumOfGames) {
     team.games = [];
     games.forEach(game => {
+        // FILTRO RED CARDS -------->
+        if(game.homeCompetitor.redCards>0)return;
+        if(game.awayCompetitor.redCards>0)return;
+        if(rivalNumOfGames!=null){
+            if(team.games.length == rivalNumOfGames) return;
+        }
+        // <------ TERMINA FILTRO RED CARDS
         // Si es un juego de la temporada
         if (game.competitionId === competitionId && game.seasonNum === seasonNum) {
             let _game = { stats: {} };
