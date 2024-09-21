@@ -14,12 +14,12 @@ export default function Compare(props) {
   const [team1, setTeam1] = useState(JSON.parse(localStorage.getItem("team1")));
   const [team2, setTeam2] = useState(JSON.parse(localStorage.getItem("team2")));
   // ----------------CUSTOM--------------------
-  // const [team1, setTeam1] = useState({ id: 480, name: "Unknown" });
-  // const seasonNumT1 = 91;
-  // const competitionIdT1 = 35;
-  // const [team2, setTeam2] = useState({ id: 132, name: "Unknown" });
-  // const seasonNumT2 = 95;
-  // const competitionIdT2 = 11;
+  // const [team1, setTeam1] = useState({ id: 227, name: "Unknown" });
+  // const seasonNumT1 = 123;
+  // const competitionIdT1 = 17;
+  // const [team2, setTeam2] = useState({ id: 108, name: "Unknown" });
+  // const seasonNumT2 = 130;
+  // const competitionIdT2 = 7;
 
   useEffect(() => {
     async function fetchData() {
@@ -77,7 +77,6 @@ export default function Compare(props) {
     team2,
   ]);
 
-  // ------------------------------------------------------------
   let customKeys = [
     {
       key: "TotalTotal",
@@ -263,7 +262,6 @@ export default function Compare(props) {
       },
     }
   );
-  // -------------------------------------------------------------------------------------------
 
   const colTotalTotal = [
     {
@@ -1012,8 +1010,6 @@ export default function Compare(props) {
     },
   ];
 
-  // ----------------------------------------------------------------
-
   return (
     <div>
       <Affix>
@@ -1176,8 +1172,6 @@ async function getStats(gameId) {
   ).then(async (response) => await response.json());
 }
 
-// -------------------
-
 // API FIRST GAMES
 async function getFirstGames(teamId) {
   return await fetch(
@@ -1231,12 +1225,15 @@ async function getGames(team, competitionId, seasonNum) {
         game.competitionId === competitionId &&
         game.seasonNum === seasonNum
       ) {
-        // <------ FILTRO RED CARDS
+        // FILTRO RED CARDS -------->
         if (
           game.homeCompetitor.redCards == 0 &&
           game.awayCompetitor.redCards == 0
         ) {
           return true;
+        }else{
+          // return true; /*uncomment this line to avoid red cards filter*/
+          return false;
         }
       }
       return false;
@@ -1247,14 +1244,13 @@ async function getGames(team, competitionId, seasonNum) {
 
 async function setTeamGames(team, stats, teamNum, games) {
   setGames(team, stats, teamNum, games);
-  // Obtenemos las stats con el API
   const responseData = [];
   await team.games
     .reduce(async function (promise, game) {
       return await promise.then(async function () {
         return await Promise.all([
           responseData.push(await getStats(game.id)),
-          await delay(300),
+          await delay(500),
         ]);
       });
     }, Promise.resolve())
