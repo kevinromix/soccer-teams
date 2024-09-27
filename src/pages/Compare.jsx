@@ -5,6 +5,7 @@ import { Link, useParams } from "react-router-dom";
 export default function Compare(props) {
   const [isLoading, setLoading] = useState(true);
   const [stats, setStats] = useState([]);
+  const useRedCards = true;
   // --------------NOT CUSTOM-------------------
   const { customPath } = useParams();
   const [competitionIdT1] = useState(props.competitionId(customPath));
@@ -27,12 +28,12 @@ export default function Compare(props) {
       let _team2 = team2;
       let _stats = initData();
       // TEAM 1
-      await getGames(_team1, competitionIdT1, seasonNumT1).then(
+      await getGames(_team1, competitionIdT1, seasonNumT1, useRedCards).then(
         async (t1Games) =>
           await new Promise(async (resolve) => setTimeout(resolve, 300)).then(
             async (_) =>
               // TEAM 2
-              await getGames(_team2, competitionIdT2, seasonNumT2).then(
+              await getGames(_team2, competitionIdT2, seasonNumT2, useRedCards).then(
                 async (t2Games) => {
                   // REGLA MISMO NUMERO DE JUEGOS --->
                   let lengthT1 = t1Games.length;
@@ -77,6 +78,34 @@ export default function Compare(props) {
     team2,
   ]);
 
+  let customKeysG = [
+    {
+      key: "GTotalTotal",
+      label: "TotalTotal:",
+      class: "total",
+    },
+    {
+      key: "GHomeAway",
+      label: "HomeAway:",
+      class: "home",
+    },
+    {
+      key: "GAwayHome",
+      label: "AwayHome:",
+      class: "away",
+    },
+    {
+      key: "GHomeHome",
+      label: "HomeHome:",
+      class: "home",
+    },
+    {
+      key: "GAwayAway",
+      label: "AwayAway:",
+      class: "away",
+    },
+  ];
+
   let customKeys = [
     {
       key: "TotalTotal",
@@ -104,6 +133,244 @@ export default function Compare(props) {
       class: "away",
     },
   ];
+
+  const totalColumnsG = [
+    {
+      key: "key",
+      fixed: "left",
+      width: 100,
+      render: (text, record) => {
+        return (
+          <Row className={record.class}>
+            <span>{record.label}</span>
+          </Row>
+        );
+      },
+    },
+  ].concat(
+    {
+      title: () => {
+        return <div className="total">{"Avg GF"}</div>;
+      },
+      width: 75,
+      render: (record) => {
+        if (record.key === "GTotalTotal") {
+          const juegosT1 = stats["Juegos"]["team1"]["total"];
+          const juegosT2 = stats["Juegos"]["team2"]["total"];
+          const avgT1 = parseFloat(
+            (stats["Goles"]["team1"]["total"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["Goles"]["team2"]["total"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GHomeAway") {
+          const juegosT1 = stats["Juegos"]["team1"]["home"];
+          const juegosT2 = stats["Juegos"]["team2"]["away"];
+          const avgT1 = parseFloat(
+            (stats["Goles"]["team1"]["home"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["Goles"]["team2"]["away"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GAwayHome") {
+          const juegosT1 = stats["Juegos"]["team1"]["away"];
+          const juegosT2 = stats["Juegos"]["team2"]["home"];
+          const avgT1 = parseFloat(
+            (stats["Goles"]["team1"]["away"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["Goles"]["team2"]["home"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GHomeHome") {
+          const juegosT1 = stats["Juegos"]["team1"]["home"];
+          const juegosT2 = stats["Juegos"]["team2"]["home"];
+          const avgT1 = parseFloat(
+            (stats["Goles"]["team1"]["home"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["Goles"]["team2"]["home"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GAwayAway") {
+          const juegosT1 = stats["Juegos"]["team1"]["away"];
+          const juegosT2 = stats["Juegos"]["team2"]["away"];
+          const avgT1 = parseFloat(
+            (stats["Goles"]["team1"]["away"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["Goles"]["team2"]["away"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        }
+      },
+    },
+    {
+      title: () => {
+        return <div className="total">{"Avg GC"}</div>;
+      },
+      width: 75,
+      render: (record) => {
+        if (record.key === "GTotalTotal") {
+          const juegosT1 = stats["Juegos"]["team1"]["total"];
+          const juegosT2 = stats["Juegos"]["team2"]["total"];
+          const avgT1 = parseFloat(
+            (stats["GolesR"]["team1"]["total"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["GolesR"]["team2"]["total"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GHomeAway") {
+          const juegosT1 = stats["Juegos"]["team1"]["home"];
+          const juegosT2 = stats["Juegos"]["team2"]["away"];
+          const avgT1 = parseFloat(
+            (stats["GolesR"]["team1"]["home"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["GolesR"]["team2"]["away"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GAwayHome") {
+          const juegosT1 = stats["Juegos"]["team1"]["away"];
+          const juegosT2 = stats["Juegos"]["team2"]["home"];
+          const avgT1 = parseFloat(
+            (stats["GolesR"]["team1"]["away"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["GolesR"]["team2"]["home"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GHomeHome") {
+          const juegosT1 = stats["Juegos"]["team1"]["home"];
+          const juegosT2 = stats["Juegos"]["team2"]["home"];
+          const avgT1 = parseFloat(
+            (stats["GolesR"]["team1"]["home"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["GolesR"]["team2"]["home"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GAwayAway") {
+          const juegosT1 = stats["Juegos"]["team1"]["away"];
+          const juegosT2 = stats["Juegos"]["team2"]["away"];
+          const avgT1 = parseFloat(
+            (stats["GolesR"]["team1"]["away"] / juegosT1).toFixed(2)
+          );
+          const avgT2 = parseFloat(
+            (stats["GolesR"]["team2"]["away"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat(((avgT1 + avgT2) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        }
+      },
+    },
+    {
+      title: () => {
+        return <div className="total">{"Avg TG"}</div>;
+      },
+      width: 75,
+      render: (record) => {
+        if (record.key === "GTotalTotal") {
+          const juegosT1 = stats["Juegos"]["team1"]["total"];
+          const juegosT2 = stats["Juegos"]["team2"]["total"];
+          const avgT1F = parseFloat(
+            (stats["Goles"]["team1"]["total"] / juegosT1).toFixed(2)
+          );
+          const avgT1C = parseFloat(
+            (stats["GolesR"]["team1"]["total"] / juegosT1).toFixed(2)
+          );
+          const avgT2F = parseFloat(
+            (stats["Goles"]["team2"]["total"] / juegosT2).toFixed(2)
+          );
+          const avgT2C = parseFloat(
+            (stats["GolesR"]["team2"]["total"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat((((avgT1F + avgT1C) + (avgT2F + avgT2C)) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GHomeAway") {
+          const juegosT1 = stats["Juegos"]["team1"]["home"];
+          const juegosT2 = stats["Juegos"]["team2"]["away"];
+          const avgT1F = parseFloat(
+            (stats["Goles"]["team1"]["home"] / juegosT1).toFixed(2)
+          );
+          const avgT1C = parseFloat(
+            (stats["GolesR"]["team1"]["home"] / juegosT1).toFixed(2)
+          );
+          const avgT2F = parseFloat(
+            (stats["Goles"]["team2"]["away"] / juegosT2).toFixed(2)
+          );
+          const avgT2C = parseFloat(
+            (stats["GolesR"]["team2"]["away"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat((((avgT1F + avgT1C) + (avgT2F + avgT2C)) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GAwayHome") {
+          const juegosT1 = stats["Juegos"]["team1"]["away"];
+          const juegosT2 = stats["Juegos"]["team2"]["home"];
+          const avgT1F = parseFloat(
+            (stats["Goles"]["team1"]["away"] / juegosT1).toFixed(2)
+          );
+          const avgT1C = parseFloat(
+            (stats["GolesR"]["team1"]["away"] / juegosT1).toFixed(2)
+          );
+          const avgT2F = parseFloat(
+            (stats["Goles"]["team2"]["home"] / juegosT2).toFixed(2)
+          );
+          const avgT2C = parseFloat(
+            (stats["GolesR"]["team2"]["home"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat((((avgT1F + avgT1C) + (avgT2F + avgT2C)) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GHomeHome") {
+          const juegosT1 = stats["Juegos"]["team1"]["home"];
+          const juegosT2 = stats["Juegos"]["team2"]["home"];
+          const avgT1F = parseFloat(
+            (stats["Goles"]["team1"]["home"] / juegosT1).toFixed(2)
+          );
+          const avgT1C = parseFloat(
+            (stats["GolesR"]["team1"]["home"] / juegosT1).toFixed(2)
+          );
+          const avgT2F = parseFloat(
+            (stats["Goles"]["team2"]["home"] / juegosT2).toFixed(2)
+          );
+          const avgT2C = parseFloat(
+            (stats["GolesR"]["team2"]["home"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat((((avgT1F + avgT1C) + (avgT2F + avgT2C)) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        } else if (record.key === "GAwayAway") {
+          const juegosT1 = stats["Juegos"]["team1"]["away"];
+          const juegosT2 = stats["Juegos"]["team2"]["away"];
+          const avgT1F = parseFloat(
+            (stats["Goles"]["team1"]["away"] / juegosT1).toFixed(2)
+          );
+          const avgT1C = parseFloat(
+            (stats["GolesR"]["team1"]["away"] / juegosT1).toFixed(2)
+          );
+          const avgT2F = parseFloat(
+            (stats["Goles"]["team2"]["away"] / juegosT2).toFixed(2)
+          );
+          const avgT2C = parseFloat(
+            (stats["GolesR"]["team2"]["away"] / juegosT2).toFixed(2)
+          );
+          const avg = parseFloat((((avgT1F + avgT1C) + (avgT2F + avgT2C)) / 2).toFixed(2));
+          return <span>{avg}</span>;
+        }
+      },
+    }
+  );
 
   const totalColumns = [
     {
@@ -199,7 +466,7 @@ export default function Compare(props) {
     },
     {
       title: () => {
-        return <div className="total">{"Avg"}</div>;
+        return <div className="total">{"Avg AA"}</div>;
       },
       width: 75,
       render: (record) => {
@@ -1089,6 +1356,16 @@ export default function Compare(props) {
         <div>
           <Row justify="center">
             <Table
+              columns={totalColumnsG}
+              dataSource={customKeysG}
+              bordered={true}
+              pagination={false}
+              size="small"
+              scroll={{ x: 0 }}
+              style={{ padding: "30px 40px 0px 40px" }}
+              rowClassName={(record) => record.class}
+            />
+            <Table
               columns={totalColumns}
               dataSource={customKeys}
               bordered={true}
@@ -1205,7 +1482,7 @@ async function getFirstGames(teamId) {
 //     return firstResponse;
 // }
 
-async function getGames(team, competitionId, seasonNum) {
+async function getGames(team, competitionId, seasonNum, useRedCards) {
   // let lastGameId;
   return await getFirstGames(team.id).then(async (response) => {
     // Filtramos solo los games de la season
@@ -1231,9 +1508,8 @@ async function getGames(team, competitionId, seasonNum) {
           game.awayCompetitor.redCards == 0
         ) {
           return true;
-        }else{
-          // return true; /*uncomment this line to avoid red cards filter*/
-          return false;
+        } else {
+          return useRedCards;
         }
       }
       return false;
@@ -1395,7 +1671,7 @@ function setGameStats(team, data, teamNum, response) {
           data["Precisión"][`team${teamNum}`].total +
           (data["Pases completados"][`team${teamNum}`].total /
             data["Total de pases"][`team${teamNum}`].total) *
-            100
+          100
         ).toFixed(2)
       );
       data["Precisión"][`team${teamNum}`][`home`] = parseFloat(
@@ -1403,7 +1679,7 @@ function setGameStats(team, data, teamNum, response) {
           data["Precisión"][`team${teamNum}`][`home`] +
           (data["Pases completados"][`team${teamNum}`][`home`] /
             data["Total de pases"][`team${teamNum}`][`home`]) *
-            100
+          100
         ).toFixed(2)
       );
       // PRECISIÓN RIVAL
@@ -1419,7 +1695,7 @@ function setGameStats(team, data, teamNum, response) {
           data["PrecisiónR"][`team${teamNum}`].total +
           (data["Pases completadosR"][`team${teamNum}`].total /
             data["Total de pasesR"][`team${teamNum}`].total) *
-            100
+          100
         ).toFixed(2)
       );
       data["PrecisiónR"][`team${teamNum}`][`home`] = parseFloat(
@@ -1427,7 +1703,7 @@ function setGameStats(team, data, teamNum, response) {
           data["PrecisiónR"][`team${teamNum}`][`home`] +
           (data["Pases completadosR"][`team${teamNum}`][`home`] /
             data["Total de pasesR"][`team${teamNum}`][`home`]) *
-            100
+          100
         ).toFixed(2)
       );
       // DIFERENCIA
@@ -1455,7 +1731,7 @@ function setGameStats(team, data, teamNum, response) {
           data["Precisión"][`team${teamNum}`].total +
           (data["Pases completados"][`team${teamNum}`].total /
             data["Total de pases"][`team${teamNum}`].total) *
-            100
+          100
         ).toFixed(2)
       );
       data["Precisión"][`team${teamNum}`][`away`] = parseFloat(
@@ -1463,7 +1739,7 @@ function setGameStats(team, data, teamNum, response) {
           data["Precisión"][`team${teamNum}`][`away`] +
           (data["Pases completados"][`team${teamNum}`][`away`] /
             data["Total de pases"][`team${teamNum}`][`away`]) *
-            100
+          100
         ).toFixed(2)
       );
       // PRECISIÓN RIVAL
@@ -1479,7 +1755,7 @@ function setGameStats(team, data, teamNum, response) {
           data["PrecisiónR"][`team${teamNum}`].total +
           (data["Pases completadosR"][`team${teamNum}`].total /
             data["Total de pasesR"][`team${teamNum}`].total) *
-            100
+          100
         ).toFixed(2)
       );
       data["PrecisiónR"][`team${teamNum}`][`away`] = parseFloat(
@@ -1487,7 +1763,7 @@ function setGameStats(team, data, teamNum, response) {
           data["PrecisiónR"][`team${teamNum}`][`away`] +
           (data["Pases completadosR"][`team${teamNum}`][`away`] /
             data["Total de pasesR"][`team${teamNum}`][`away`]) *
-            100
+          100
         ).toFixed(2)
       );
       // DIFERENCIA
