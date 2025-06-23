@@ -5,7 +5,6 @@ import { Link, useParams } from "react-router-dom";
 export default function Compare(props) {
   const [isLoading, setLoading] = useState(true);
   const [stats, setStats] = useState([]);
-  const useRedCards = true;
   // --------------NOT CUSTOM-------------------
   const { customPath } = useParams();
   const [competitionIdT1] = useState(props.competitionId(customPath));
@@ -28,43 +27,40 @@ export default function Compare(props) {
       let _team2 = team2;
       let _stats = initData();
       // TEAM 1
-      await getGames(_team1, competitionIdT1, seasonNumT1, useRedCards).then(
+      await getGames(_team1, competitionIdT1, seasonNumT1).then(
         async (t1Games) =>
           await new Promise(async (resolve) => setTimeout(resolve, 300)).then(
             async (_) =>
               // TEAM 2
-              await getGames(
-                _team2,
-                competitionIdT2,
-                seasonNumT2,
-                useRedCards
-              ).then(async (t2Games) => {
-                // REGLA MISMO NUMERO DE JUEGOS --->
-                let lengthT1 = t1Games.length;
-                let lengthT2 = t2Games.length;
-                if (lengthT1 > lengthT2) {
-                  let diferencia = lengthT1 - lengthT2;
-                  t1Games = t1Games.slice(0, t1Games.length - diferencia);
-                } else if (lengthT2 > lengthT1) {
-                  let diferencia = lengthT2 - lengthT1;
-                  t2Games = t2Games.slice(0, t2Games.length - diferencia);
-                }
-                // <---- REGLA MISMO NUMERO DE JUEGOS
-                // TEAM 1
-                await setTeamGames(_team1, _stats, "1", t1Games).then(
-                  async (_) => {
-                    // TEAM 2
-                    await setTeamGames(_team2, _stats, "2", t2Games).then(
-                      async (_) => {
-                        setLoading(false);
-                        setStats(_stats);
-                        setTeam1(_team1);
-                        setTeam2(_team2);
-                      }
-                    );
+              await getGames(_team2, competitionIdT2, seasonNumT2).then(
+                async (t2Games) => {
+                  // REGLA MISMO NUMERO DE JUEGOS --->
+                  let lengthT1 = t1Games.length;
+                  let lengthT2 = t2Games.length;
+                  if (lengthT1 > lengthT2) {
+                    let diferencia = lengthT1 - lengthT2;
+                    t1Games = t1Games.slice(0, t1Games.length - diferencia);
+                  } else if (lengthT2 > lengthT1) {
+                    let diferencia = lengthT2 - lengthT1;
+                    t2Games = t2Games.slice(0, t2Games.length - diferencia);
                   }
-                );
-              })
+                  // <---- REGLA MISMO NUMERO DE JUEGOS
+                  // TEAM 1
+                  await setTeamGames(_team1, _stats, "1", t1Games).then(
+                    async (_) => {
+                      // TEAM 2
+                      await setTeamGames(_team2, _stats, "2", t2Games).then(
+                        async (_) => {
+                          setLoading(false);
+                          setStats(_stats);
+                          setTeam1(_team1);
+                          setTeam2(_team2);
+                        }
+                      );
+                    }
+                  );
+                }
+              )
           )
       );
     }
@@ -79,7 +75,6 @@ export default function Compare(props) {
     seasonNumT2,
     team1,
     team2,
-    useRedCards,
   ]);
 
   let customKeys = [
@@ -246,6 +241,213 @@ export default function Compare(props) {
                 <span>{avg}</span>
               </div>
             );
+          },
+        },
+      ],
+    },
+    {
+      title: (
+        <div className="total">
+          <span>Clip</span>
+        </div>
+      ),
+      children: [
+        {
+          title: () => <div className="total">Copy</div>,
+          render: (_, record) => {
+            const juegosT1Home = stats["Juegos"]["team1"]["home"];
+            const juegosT1Away = stats["Juegos"]["team1"]["away"];
+            const juegosT2Home = stats["Juegos"]["team2"]["home"];
+            const juegosT2Away = stats["Juegos"]["team2"]["away"];
+
+            if (record.key === "AvgGoles") {
+              return (
+                <div className="total">
+                  <button
+                    onClick={() => {
+                      // TEAM 1 HOME
+                      const avgT1HE = parseFloat(
+                        (
+                          stats["Goles"]["team1"]["home"] / juegosT1Home
+                        ).toFixed(2)
+                      );
+                      const avgT1HR = parseFloat(
+                        (
+                          stats["GolesR"]["team1"]["home"] / juegosT1Home
+                        ).toFixed(2)
+                      );
+                      let team1Home = parseFloat(
+                        ((avgT1HE + avgT1HR) / 2).toFixed(2)
+                      );
+
+                      // TEAM 2 Away
+                      const avgT2AE = parseFloat(
+                        (
+                          stats["Goles"]["team2"]["away"] / juegosT2Away
+                        ).toFixed(2)
+                      );
+                      const avgT2AR = parseFloat(
+                        (
+                          stats["GolesR"]["team2"]["away"] / juegosT2Away
+                        ).toFixed(2)
+                      );
+                      let team2Away = parseFloat(
+                        ((avgT2AE + avgT2AR) / 2).toFixed(2)
+                      );
+
+                      // TEAM 1 Away
+                      const avgT1AE = parseFloat(
+                        (
+                          stats["Goles"]["team1"]["away"] / juegosT1Away
+                        ).toFixed(2)
+                      );
+                      const avgT1AR = parseFloat(
+                        (
+                          stats["GolesR"]["team1"]["away"] / juegosT1Away
+                        ).toFixed(2)
+                      );
+                      let team1Away = parseFloat(
+                        ((avgT1AE + avgT1AR) / 2).toFixed(2)
+                      );
+
+                      // TEAM 2 HOME
+                      const avgT2HE = parseFloat(
+                        (
+                          stats["Goles"]["team2"]["home"] / juegosT2Home
+                        ).toFixed(2)
+                      );
+                      const avgT2HR = parseFloat(
+                        (
+                          stats["GolesR"]["team2"]["home"] / juegosT2Home
+                        ).toFixed(2)
+                      );
+                      let team2Home = parseFloat(
+                        ((avgT2HE + avgT2HR) / 2).toFixed(2)
+                      );
+
+                      const avgGolesL = ((team1Home + team2Away) / 2).toFixed(
+                        2
+                      );
+                      const avgGolesLV = (
+                        (team1Home + team2Away + team1Away + team2Home) /
+                        4
+                      ).toFixed(2);
+
+                      // -------------AA----------------
+
+                      // TEAM 1 HOME
+                      const team1HomeAA = parseFloat(
+                        (stats["AA"]["team1"]["home"] / juegosT1Home).toFixed(
+                          2
+                        ) * 100
+                      );
+
+                      // TEAM 2 Away
+                      const team2AwayAA = parseFloat(
+                        (stats["AA"]["team2"]["away"] / juegosT2Away).toFixed(
+                          2
+                        ) * 100
+                      );
+
+                      // TEAM 1 Away
+                      const team1AwayAA = parseFloat(
+                        (stats["AA"]["team1"]["away"] / juegosT1Away).toFixed(
+                          2
+                        ) * 100
+                      );
+
+                      // TEAM 2 HOME
+                      const team2HomeAA = parseFloat(
+                        (stats["AA"]["team2"]["home"] / juegosT2Home).toFixed(
+                          2
+                        ) * 100
+                      );
+
+                      const avgAAL = ((team1HomeAA + team2AwayAA) / 2).toFixed(
+                        2
+                      );
+                      const avgAALV = (
+                        (team1HomeAA +
+                          team2AwayAA +
+                          team1AwayAA +
+                          team2HomeAA) /
+                        4
+                      ).toFixed(2);
+
+                      const arr = [
+                        [
+                          avgGolesL,
+                          avgGolesLV,
+                          avgAAL,
+                          avgAALV,
+                          // team1HomeAA,
+                          // team2AwayAA,
+                          // team1AwayAA,
+                          // team2HomeAA,
+                          // team1Home,
+                          // team2Away,
+                          // team1Away,
+                          // team2Home,
+                        ],
+                      ];
+
+                      const excelData = arr
+                        .map((lines) => lines.join("\t"))
+                        .join("\n");
+                      navigator.clipboard.writeText(excelData);
+                    }}
+                  >
+                    Copy
+                  </button>
+                </div>
+              );
+            } else if (record.key === "AvgAA") {
+              return <div className="total"></div>;
+              //     <button
+              //       onClick={() => {
+              //         // TEAM 1 HOME
+              //         const team1Home = parseFloat(
+              //           (stats["AA"]["team1"]["home"] / juegosT1Home).toFixed(
+              //             2
+              //           ) * 100
+              //         );
+
+              //         // TEAM 2 Away
+              //         const team2Away = parseFloat(
+              //           (stats["AA"]["team2"]["away"] / juegosT2Away).toFixed(
+              //             2
+              //           ) * 100
+              //         );
+
+              //         // TEAM 1 Away
+              //         const team1Away = parseFloat(
+              //           (stats["AA"]["team1"]["away"] / juegosT1Away).toFixed(
+              //             2
+              //           ) * 100
+              //         );
+
+              //         // TEAM 2 HOME
+              //         const team2Home = parseFloat(
+              //           (stats["AA"]["team2"]["home"] / juegosT2Home).toFixed(
+              //             2
+              //           ) * 100
+              //         );
+
+              //         const arr = [
+              //           [team1Home, team2Away, team1Away, team2Home],
+              //         ];
+
+              //         const excelData = arr
+              //           .map((lines) => lines.join("\t"))
+              //           .join("\n");
+              //         navigator.clipboard.writeText(excelData);
+              //       }}
+              //     >
+              //       Copy
+              //     </button>
+              //   </div>
+              // );
+            }
           },
         },
       ],
@@ -1194,38 +1396,31 @@ async function getFirstGames(teamId) {
 //     return firstResponse;
 // }
 
-async function getGames(team, competitionId, seasonNum, useRedCards) {
+async function getGames(team, competitionId, seasonNum) {
   // let lastGameId;
   return await getFirstGames(team.id).then(async (response) => {
     // Filtramos solo los games de la season
-    response.games = response.games.filter(
-      (game) => game.seasonNum === seasonNum && game.gameTime !== -1
-    );
+    response.games = response.games.filter((game) => {
+      return (
+        // FILTRO DE LIGA -------->
+        // game.competitionId === competitionId &&
+        // FILTRO DE TEMPORADA -------->
+        // game.seasonNum === seasonNum &&
+        // FILTRO DE ID -------->
+        // !isNaN(game.roundNum) &&
+        // FILTRO RED CARDS -------->
+        // game.homeCompetitor.redCards === 0 &&
+        // (game.awayCompetitor.redCards === 0) &&
+        // FILTRO DE SECRET -------->
+        game.gameTime !== -1
+      );
+    });
     // Obtenemos el last gameId
     // lastGameId = response.games[response.games.length - 1].id;
     // Agregar los Juegos faltantes
     // await addNextGames(team.id, lastGameId, seasonNum, response).then(async fullResponse => {
     // Llenamos el arreglo de games
-    response.games = response.games.slice(0, 10);
-    // FILTROS DE JUEGOS
-    response.games = response.games.filter((game) => {
-      // FILTRO DE LIGA -------->
-      if (
-        game.competitionId === competitionId &&
-        game.seasonNum === seasonNum
-      ) {
-        // FILTRO RED CARDS -------->
-        if (
-          game.homeCompetitor.redCards === 0 &&
-          game.awayCompetitor.redCards === 0
-        ) {
-          return true;
-        } else {
-          return useRedCards;
-        }
-      }
-      return false;
-    });
+    response.games = response.games.slice(0, 16);
     return response.games;
   });
 }
@@ -1251,9 +1446,9 @@ function setGames(team, stats, teamNum, games) {
   games.forEach((game) => {
     let _game = { stats: {} };
     _game.key = parseInt(game.roundNum);
-    if (isNaN(_game.key)) {
-      _game.key = team.games.length + 1000;
-    }
+    // if (isNaN(_game.key)) {
+    //   _game.key = team.games.length + 1000;
+    // }
     // GameId
     _game.id = parseInt(game.id);
     // Equipo esLocal
@@ -1342,280 +1537,287 @@ function setGameStats(team, data, teamNum, response) {
   team.againstGolesBefore45 = 0;
   team.forGolesAfter45 = 0;
   team.againstGolesAfter45 = 0;
+
   response?.forEach((result) => {
-    const index = team.games.findIndex(
-      (g) => g.id === parseInt(result.games[0]?.id)
-    );
-    const homeCompetitor = result.games[0].homeCompetitor;
-    const awayCompetitor = result.games[0].awayCompetitor;
-    const esLocal = team.games[index].esLocal;
-    team.games[index].goles = [];
-    team.games[index].tarjetasAmarillas = [];
-    team.games[index].tarjetasRojas = [];
-    // GAME STATS
-    setData(
-      team.games[index],
-      result.statistics,
-      data,
-      teamNum,
-      esLocal,
-      team.id
-    );
-    if (esLocal) {
-      // GOLES EQUIPO
-      team.games[index].stats["Goles"] = homeCompetitor.score;
-      data["Goles"][`team${teamNum}`].total += homeCompetitor.score;
-      data["Goles"][`team${teamNum}`][`home`] += homeCompetitor.score;
-      // GOLES RIVAL
-      team.games[index].stats["GolesR"] = awayCompetitor.score;
-      data["GolesR"][`team${teamNum}`].total += awayCompetitor.score;
-      data["GolesR"][`team${teamNum}`][`home`] += awayCompetitor.score;
-      // PRECISIÓN EQUIPO
-      team.games[index].stats["Precisión"] = parseFloat(
-        (
-          (team.games[index].stats["Pases completados"] /
-            team.games[index].stats["Total de pases"]) *
-          100
-        ).toFixed(2)
+    try {
+      const index = team.games.findIndex((g) => {
+        console.log("game: ");
+        console.log(g);
+        console.log("result: ");
+        console.log(result);
+        return g.id === parseInt(result.games[0]?.id);
+      });
+      const homeCompetitor = result.games[0].homeCompetitor;
+      const awayCompetitor = result.games[0].awayCompetitor;
+      const esLocal = team.games[index].esLocal;
+      team.games[index].goles = [];
+      team.games[index].tarjetasAmarillas = [];
+      team.games[index].tarjetasRojas = [];
+      // GAME STATS
+      setData(
+        team.games[index],
+        result.statistics,
+        data,
+        teamNum,
+        esLocal,
+        team.id
       );
-      data["Precisión"][`team${teamNum}`].total = parseFloat(
-        (
-          data["Precisión"][`team${teamNum}`].total +
-          (data["Pases completados"][`team${teamNum}`].total /
-            data["Total de pases"][`team${teamNum}`].total) *
-            100
-        ).toFixed(2)
-      );
-      data["Precisión"][`team${teamNum}`][`home`] = parseFloat(
-        (
-          data["Precisión"][`team${teamNum}`][`home`] +
-          (data["Pases completados"][`team${teamNum}`][`home`] /
-            data["Total de pases"][`team${teamNum}`][`home`]) *
-            100
-        ).toFixed(2)
-      );
-      // PRECISIÓN RIVAL
-      team.games[index].stats["PrecisiónR"] = parseFloat(
-        (
-          (team.games[index].stats["Pases completadosR"] /
-            team.games[index].stats["Total de pasesR"]) *
-          100
-        ).toFixed(2)
-      );
-      data["PrecisiónR"][`team${teamNum}`].total = parseFloat(
-        (
-          data["PrecisiónR"][`team${teamNum}`].total +
-          (data["Pases completadosR"][`team${teamNum}`].total /
-            data["Total de pasesR"][`team${teamNum}`].total) *
-            100
-        ).toFixed(2)
-      );
-      data["PrecisiónR"][`team${teamNum}`][`home`] = parseFloat(
-        (
-          data["PrecisiónR"][`team${teamNum}`][`home`] +
-          (data["Pases completadosR"][`team${teamNum}`][`home`] /
-            data["Total de pasesR"][`team${teamNum}`][`home`]) *
-            100
-        ).toFixed(2)
-      );
-      // DIFERENCIA
-      const diferencia = homeCompetitor.score - awayCompetitor.score;
-      team.games[index].stats["Diferencia"] = diferencia;
-    } else {
-      // GOLES EQUIPO
-      team.games[index].stats["Goles"] = awayCompetitor.score;
-      data["Goles"][`team${teamNum}`].total += awayCompetitor.score;
-      data["Goles"][`team${teamNum}`][`away`] += awayCompetitor.score;
-      // GOLES RIVAL
-      team.games[index].stats["GolesR"] = homeCompetitor.score;
-      data["GolesR"][`team${teamNum}`].total += homeCompetitor.score;
-      data["GolesR"][`team${teamNum}`][`away`] += homeCompetitor.score;
-      // PRECISIÓN EQUIPO
-      team.games[index].stats["Precisión"] = parseFloat(
-        (
-          (team.games[index].stats["Pases completados"] /
-            team.games[index].stats["Total de pases"]) *
-          100
-        ).toFixed(2)
-      );
-      data["Precisión"][`team${teamNum}`].total = parseFloat(
-        (
-          data["Precisión"][`team${teamNum}`].total +
-          (data["Pases completados"][`team${teamNum}`].total /
-            data["Total de pases"][`team${teamNum}`].total) *
-            100
-        ).toFixed(2)
-      );
-      data["Precisión"][`team${teamNum}`][`away`] = parseFloat(
-        (
-          data["Precisión"][`team${teamNum}`][`away`] +
-          (data["Pases completados"][`team${teamNum}`][`away`] /
-            data["Total de pases"][`team${teamNum}`][`away`]) *
-            100
-        ).toFixed(2)
-      );
-      // PRECISIÓN RIVAL
-      team.games[index].stats["PrecisiónR"] = parseFloat(
-        (
-          (team.games[index].stats["Pases completadosR"] /
-            team.games[index].stats["Total de pasesR"]) *
-          100
-        ).toFixed(2)
-      );
-      data["PrecisiónR"][`team${teamNum}`].total = parseFloat(
-        (
-          data["PrecisiónR"][`team${teamNum}`].total +
-          (data["Pases completadosR"][`team${teamNum}`].total /
-            data["Total de pasesR"][`team${teamNum}`].total) *
-            100
-        ).toFixed(2)
-      );
-      data["PrecisiónR"][`team${teamNum}`][`away`] = parseFloat(
-        (
-          data["PrecisiónR"][`team${teamNum}`][`away`] +
-          (data["Pases completadosR"][`team${teamNum}`][`away`] /
-            data["Total de pasesR"][`team${teamNum}`][`away`]) *
-            100
-        ).toFixed(2)
-      );
-      // DIFERENCIA
-      const diferencia = awayCompetitor.score - homeCompetitor.score;
-      team.games[index].stats["Diferencia"] = diferencia;
-    }
-    // AA
-    const isAA = homeCompetitor.score > 0 && awayCompetitor.score > 0;
-    if (isAA) {
-      team.games[index].stats["AA"] = 1;
-      data["AA"][`team${teamNum}`].total += 1;
       if (esLocal) {
-        data["AA"][`team${teamNum}`].home += 1;
+        // GOLES EQUIPO
+        team.games[index].stats["Goles"] = homeCompetitor.score;
+        data["Goles"][`team${teamNum}`].total += homeCompetitor.score;
+        data["Goles"][`team${teamNum}`][`home`] += homeCompetitor.score;
+        // GOLES RIVAL
+        team.games[index].stats["GolesR"] = awayCompetitor.score;
+        data["GolesR"][`team${teamNum}`].total += awayCompetitor.score;
+        data["GolesR"][`team${teamNum}`][`home`] += awayCompetitor.score;
+        // PRECISIÓN EQUIPO
+        team.games[index].stats["Precisión"] = parseFloat(
+          (
+            (team.games[index].stats["Pases completados"] /
+              team.games[index].stats["Total de pases"]) *
+            100
+          ).toFixed(2)
+        );
+        data["Precisión"][`team${teamNum}`].total = parseFloat(
+          (
+            data["Precisión"][`team${teamNum}`].total +
+            (data["Pases completados"][`team${teamNum}`].total /
+              data["Total de pases"][`team${teamNum}`].total) *
+              100
+          ).toFixed(2)
+        );
+        data["Precisión"][`team${teamNum}`][`home`] = parseFloat(
+          (
+            data["Precisión"][`team${teamNum}`][`home`] +
+            (data["Pases completados"][`team${teamNum}`][`home`] /
+              data["Total de pases"][`team${teamNum}`][`home`]) *
+              100
+          ).toFixed(2)
+        );
+        // PRECISIÓN RIVAL
+        team.games[index].stats["PrecisiónR"] = parseFloat(
+          (
+            (team.games[index].stats["Pases completadosR"] /
+              team.games[index].stats["Total de pasesR"]) *
+            100
+          ).toFixed(2)
+        );
+        data["PrecisiónR"][`team${teamNum}`].total = parseFloat(
+          (
+            data["PrecisiónR"][`team${teamNum}`].total +
+            (data["Pases completadosR"][`team${teamNum}`].total /
+              data["Total de pasesR"][`team${teamNum}`].total) *
+              100
+          ).toFixed(2)
+        );
+        data["PrecisiónR"][`team${teamNum}`][`home`] = parseFloat(
+          (
+            data["PrecisiónR"][`team${teamNum}`][`home`] +
+            (data["Pases completadosR"][`team${teamNum}`][`home`] /
+              data["Total de pasesR"][`team${teamNum}`][`home`]) *
+              100
+          ).toFixed(2)
+        );
+        // DIFERENCIA
+        const diferencia = homeCompetitor.score - awayCompetitor.score;
+        team.games[index].stats["Diferencia"] = diferencia;
       } else {
-        data["AA"][`team${teamNum}`].away += 1;
+        // GOLES EQUIPO
+        team.games[index].stats["Goles"] = awayCompetitor.score;
+        data["Goles"][`team${teamNum}`].total += awayCompetitor.score;
+        data["Goles"][`team${teamNum}`][`away`] += awayCompetitor.score;
+        // GOLES RIVAL
+        team.games[index].stats["GolesR"] = homeCompetitor.score;
+        data["GolesR"][`team${teamNum}`].total += homeCompetitor.score;
+        data["GolesR"][`team${teamNum}`][`away`] += homeCompetitor.score;
+        // PRECISIÓN EQUIPO
+        team.games[index].stats["Precisión"] = parseFloat(
+          (
+            (team.games[index].stats["Pases completados"] /
+              team.games[index].stats["Total de pases"]) *
+            100
+          ).toFixed(2)
+        );
+        data["Precisión"][`team${teamNum}`].total = parseFloat(
+          (
+            data["Precisión"][`team${teamNum}`].total +
+            (data["Pases completados"][`team${teamNum}`].total /
+              data["Total de pases"][`team${teamNum}`].total) *
+              100
+          ).toFixed(2)
+        );
+        data["Precisión"][`team${teamNum}`][`away`] = parseFloat(
+          (
+            data["Precisión"][`team${teamNum}`][`away`] +
+            (data["Pases completados"][`team${teamNum}`][`away`] /
+              data["Total de pases"][`team${teamNum}`][`away`]) *
+              100
+          ).toFixed(2)
+        );
+        // PRECISIÓN RIVAL
+        team.games[index].stats["PrecisiónR"] = parseFloat(
+          (
+            (team.games[index].stats["Pases completadosR"] /
+              team.games[index].stats["Total de pasesR"]) *
+            100
+          ).toFixed(2)
+        );
+        data["PrecisiónR"][`team${teamNum}`].total = parseFloat(
+          (
+            data["PrecisiónR"][`team${teamNum}`].total +
+            (data["Pases completadosR"][`team${teamNum}`].total /
+              data["Total de pasesR"][`team${teamNum}`].total) *
+              100
+          ).toFixed(2)
+        );
+        data["PrecisiónR"][`team${teamNum}`][`away`] = parseFloat(
+          (
+            data["PrecisiónR"][`team${teamNum}`][`away`] +
+            (data["Pases completadosR"][`team${teamNum}`][`away`] /
+              data["Total de pasesR"][`team${teamNum}`][`away`]) *
+              100
+          ).toFixed(2)
+        );
+        // DIFERENCIA
+        const diferencia = awayCompetitor.score - homeCompetitor.score;
+        team.games[index].stats["Diferencia"] = diferencia;
       }
-    } else {
-      team.games[index].stats["AA"] = 0;
-    }
-    // const members = result.game.members;
-    // EVENTOS
-    // result.game.events?.forEach((event) => {
-    //     const esEquipo = event.competitorId === team.id;
-    //     // EVENT GOLES
-    //     if (event.eventType.id === 1) {
-    //         const gameTime = parseInt(event.gameTime);
-    //         team.games[index].goles.push({
-    //             competitorId: event.competitorId,
-    //             playerId: event.playerId,
-    //             gameTime: gameTime,
-    //         });
-    //         if (esEquipo) {
-    //             let _gol = {
-    //                 key: team.games[index].key,
-    //                 jornada: team.games[index].key,
-    //                 resultado: team.games[index].resultado,
-    //                 local: team.games[index].local,
-    //                 golesLocal: team.games[index].golesLocal,
-    //                 visitante: team.games[index].visitante,
-    //                 esLocal: esLocal,
-    //                 golesVisitante: team.games[index].golesVisitante,
-    //                 gameTime: gameTime,
-    //                 asistPlayerId: event.extraPlayers !== undefined ? event.extraPlayers[0] : null,
-    //             }
-    //             let indexGol = team.scorerPlayers.findIndex(player => player.playerId === event.playerId);
-    //             if (indexGol !== -1) {
-    //                 team.scorerPlayers[indexGol].goles.push(_gol);
-    //             } else {
-    //                 // const player = members.find(m => m.id === event.playerId);
-    //                 // team.scorerPlayers.push(
-    //                 //     {
-    //                 //         playerId: player.id,
-    //                 //         athleteId: player.athleteId,
-    //                 //         name: player.name,
-    //                 //         goles: [_gol],
-    //                 //     }
-    //                 // )
-    //             }
-    //         }
-    //         //GOLES DE PENAL
-    //         if (event.eventType.subTypeId === 3) {
-    //             if (esEquipo) {
-    //                 team.forGolesDePenal++;
-    //             } else {
-    //                 team.againstGolesDePenal++;
-    //             }
-    //         }
-    //         // BEFORE AFTER MD
-    //         if (gameTime <= 45) {
-    //             if (esEquipo) {
-    //                 team.forGolesBefore45++;
-    //             } else {
-    //                 team.againstGolesBefore45++;
-    //             }
-    //         } else {
-    //             if (esEquipo) {
-    //                 team.forGolesAfter45++;
-    //             } else {
-    //                 team.againstGolesAfter45++
-    //             }
-    //         }
-    //         // ASISTENCIAS
-    //         if (event.extraPlayers !== undefined) {
-    //             if (esEquipo) {
-    //                 let _assistance = {
-    //                     key: team.games[index].key,
-    //                     jornada: team.games[index].key,
-    //                     resultado: team.games[index].resultado,
-    //                     local: team.games[index].local,
-    //                     golesLocal: team.games[index].golesLocal,
-    //                     visitante: team.games[index].visitante,
-    //                     esLocal: esLocal,
-    //                     golesVisitante: team.games[index].golesVisitante,
-    //                     gameTime: gameTime,
-    //                 }
-    //                 let indexAssist = team.assistPlayers.findIndex(player => player.playerId === event.extraPlayers[0]);
-    //                 if (indexAssist !== -1) {
-    //                     team.assistPlayers[indexAssist].assists.push(_assistance);
-    //                 } else {
-    //                     // const player = members.find(m => m.id === event.extraPlayers[0]);
-    //                     // if (player !== undefined) {
-    //                     //     team.assistPlayers.push(
-    //                     //         {
-    //                     //             playerId: player.id,
-    //                     //             athleteId: player.athleteId,
-    //                     //             name: player.name,
-    //                     //             assists: [_assistance],
-    //                     //         }
-    //                     //     )
-    //                     // }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     // EVENT TARJETAS AMARILLAS
-    //     if (event.eventType.id === 2) {
-    //         team.games[index].tarjetasAmarillas.push({
-    //             competitorId: event.competitorId,
-    //             playerId: event.playerId,
-    //             gameTime: parseInt(event.gameTime),
-    //         });
-    //     }
-    //     // EVENT TARJETAS ROJAS
-    //     if (event.eventType.id === 3) {
-    //         team.games[index].tarjetasRojas.push({
-    //             competitorId: event.competitorId,
-    //             playerId: event.playerId,
-    //             gameTime: parseInt(event.gameTime),
-    //         });
-    //     }
-    // });
-    // ALINEACION
-    team.games[index].homeCompetitor = [];
-    team.games[index].awayCompetitor = [];
-    // result.game.homeCompetitor.lineups?.members.forEach(member => {
-    //     team.games[index].homeCompetitor.push(setMemberStats(member, members, team.games[index].tarjetasAmarillas, team.games[index].tarjetasRojas));
-    // });
-    // result.game.awayCompetitor.lineups?.members.forEach(member => {
-    //     team.games[index].awayCompetitor.push(setMemberStats(member, members, team.games[index].tarjetasAmarillas, team.games[index].tarjetasRojas));
-    // });
+      // AA
+      const isAA = homeCompetitor.score > 0 && awayCompetitor.score > 0;
+      if (isAA) {
+        team.games[index].stats["AA"] = 1;
+        data["AA"][`team${teamNum}`].total += 1;
+        if (esLocal) {
+          data["AA"][`team${teamNum}`].home += 1;
+        } else {
+          data["AA"][`team${teamNum}`].away += 1;
+        }
+      } else {
+        team.games[index].stats["AA"] = 0;
+      }
+      // const members = result.game.members;
+      // EVENTOS
+      // result.game.events?.forEach((event) => {
+      //     const esEquipo = event.competitorId === team.id;
+      //     // EVENT GOLES
+      //     if (event.eventType.id === 1) {
+      //         const gameTime = parseInt(event.gameTime);
+      //         team.games[index].goles.push({
+      //             competitorId: event.competitorId,
+      //             playerId: event.playerId,
+      //             gameTime: gameTime,
+      //         });
+      //         if (esEquipo) {
+      //             let _gol = {
+      //                 key: team.games[index].key,
+      //                 jornada: team.games[index].key,
+      //                 resultado: team.games[index].resultado,
+      //                 local: team.games[index].local,
+      //                 golesLocal: team.games[index].golesLocal,
+      //                 visitante: team.games[index].visitante,
+      //                 esLocal: esLocal,
+      //                 golesVisitante: team.games[index].golesVisitante,
+      //                 gameTime: gameTime,
+      //                 asistPlayerId: event.extraPlayers !== undefined ? event.extraPlayers[0] : null,
+      //             }
+      //             let indexGol = team.scorerPlayers.findIndex(player => player.playerId === event.playerId);
+      //             if (indexGol !== -1) {
+      //                 team.scorerPlayers[indexGol].goles.push(_gol);
+      //             } else {
+      //                 // const player = members.find(m => m.id === event.playerId);
+      //                 // team.scorerPlayers.push(
+      //                 //     {
+      //                 //         playerId: player.id,
+      //                 //         athleteId: player.athleteId,
+      //                 //         name: player.name,
+      //                 //         goles: [_gol],
+      //                 //     }
+      //                 // )
+      //             }
+      //         }
+      //         //GOLES DE PENAL
+      //         if (event.eventType.subTypeId === 3) {
+      //             if (esEquipo) {
+      //                 team.forGolesDePenal++;
+      //             } else {
+      //                 team.againstGolesDePenal++;
+      //             }
+      //         }
+      //         // BEFORE AFTER MD
+      //         if (gameTime <= 45) {
+      //             if (esEquipo) {
+      //                 team.forGolesBefore45++;
+      //             } else {
+      //                 team.againstGolesBefore45++;
+      //             }
+      //         } else {
+      //             if (esEquipo) {
+      //                 team.forGolesAfter45++;
+      //             } else {
+      //                 team.againstGolesAfter45++
+      //             }
+      //         }
+      //         // ASISTENCIAS
+      //         if (event.extraPlayers !== undefined) {
+      //             if (esEquipo) {
+      //                 let _assistance = {
+      //                     key: team.games[index].key,
+      //                     jornada: team.games[index].key,
+      //                     resultado: team.games[index].resultado,
+      //                     local: team.games[index].local,
+      //                     golesLocal: team.games[index].golesLocal,
+      //                     visitante: team.games[index].visitante,
+      //                     esLocal: esLocal,
+      //                     golesVisitante: team.games[index].golesVisitante,
+      //                     gameTime: gameTime,
+      //                 }
+      //                 let indexAssist = team.assistPlayers.findIndex(player => player.playerId === event.extraPlayers[0]);
+      //                 if (indexAssist !== -1) {
+      //                     team.assistPlayers[indexAssist].assists.push(_assistance);
+      //                 } else {
+      //                     // const player = members.find(m => m.id === event.extraPlayers[0]);
+      //                     // if (player !== undefined) {
+      //                     //     team.assistPlayers.push(
+      //                     //         {
+      //                     //             playerId: player.id,
+      //                     //             athleteId: player.athleteId,
+      //                     //             name: player.name,
+      //                     //             assists: [_assistance],
+      //                     //         }
+      //                     //     )
+      //                     // }
+      //                 }
+      //             }
+      //         }
+      //     }
+      //     // EVENT TARJETAS AMARILLAS
+      //     if (event.eventType.id === 2) {
+      //         team.games[index].tarjetasAmarillas.push({
+      //             competitorId: event.competitorId,
+      //             playerId: event.playerId,
+      //             gameTime: parseInt(event.gameTime),
+      //         });
+      //     }
+      //     // EVENT TARJETAS ROJAS
+      //     if (event.eventType.id === 3) {
+      //         team.games[index].tarjetasRojas.push({
+      //             competitorId: event.competitorId,
+      //             playerId: event.playerId,
+      //             gameTime: parseInt(event.gameTime),
+      //         });
+      //     }
+      // });
+      // ALINEACION
+      team.games[index].homeCompetitor = [];
+      team.games[index].awayCompetitor = [];
+      // result.game.homeCompetitor.lineups?.members.forEach(member => {
+      //     team.games[index].homeCompetitor.push(setMemberStats(member, members, team.games[index].tarjetasAmarillas, team.games[index].tarjetasRojas));
+      // });
+      // result.game.awayCompetitor.lineups?.members.forEach(member => {
+      //     team.games[index].awayCompetitor.push(setMemberStats(member, members, team.games[index].tarjetasAmarillas, team.games[index].tarjetasRojas));
+      // });
+    } catch (error) {}
   });
 }
 
@@ -1687,7 +1889,7 @@ function setMemberStats(member, members, tarjetasAmarillas, tarjetasRojas) {
         case "Total Remates":
           auxMember.totalRemates = parseInt(stat.value);
           break;
-        case "Remates a Puerta":
+        case "Remates al arco":
           auxMember.rematesAPuerta = parseInt(stat.value);
           break;
         case "Remates Fuera":
@@ -1837,102 +2039,6 @@ function initData() {
       away: 0,
     },
   };
-  auxData["Goles esperados"] = {
-    key: "Goles esperados",
-    label: "xG",
-    esEquipo: true,
-    isDiff: false,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
-  auxData["Goles esperadosR"] = {
-    key: "Goles esperadosR",
-    label: "xG",
-    esEquipo: false,
-    isDiff: true,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
-  auxData["Grandes chances"] = {
-    key: "Grandes chances",
-    label: "Gr. Chan",
-    esEquipo: true,
-    isDiff: false,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
-  auxData["Grandes chancesR"] = {
-    key: "Grandes chancesR",
-    label: "Gr. Chan",
-    esEquipo: false,
-    isDiff: true,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
-  auxData["Ataques"] = {
-    key: "Ataques",
-    label: "Ataques",
-    esEquipo: true,
-    isDiff: false,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
-  auxData["AtaquesR"] = {
-    key: "AtaquesR",
-    label: "Ataques",
-    esEquipo: false,
-    isDiff: true,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
   auxData["Total Remates"] = {
     key: "Total Remates",
     label: "Remates",
@@ -1965,8 +2071,8 @@ function initData() {
       away: 0,
     },
   };
-  auxData["Remates a Puerta"] = {
-    key: "Remates a Puerta",
+  auxData["Remates al arco"] = {
+    key: "Remates al arco",
     label: "R. Arco",
     esEquipo: true,
     isDiff: false,
@@ -1981,8 +2087,8 @@ function initData() {
       away: 0,
     },
   };
-  auxData["Remates a PuertaR"] = {
-    key: "Remates a PuertaR",
+  auxData["Remates al arcoR"] = {
+    key: "Remates al arcoR",
     label: "R. Arco",
     esEquipo: false,
     isDiff: true,
@@ -1997,70 +2103,70 @@ function initData() {
       away: 0,
     },
   };
-  auxData["Remates Fuera"] = {
-    key: "Remates Fuera",
-    label: "R. Fuera",
-    esEquipo: true,
-    isDiff: false,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
-  auxData["Remates FueraR"] = {
-    key: "Remates FueraR",
-    label: "R. Fuera",
-    esEquipo: false,
-    isDiff: true,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
-  auxData["Remates bloqueados"] = {
-    key: "Remates bloqueados",
-    label: "R. Bloq",
-    esEquipo: true,
-    isDiff: false,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
-  auxData["Remates bloqueadosR"] = {
-    key: "Remates bloqueadosR",
-    label: "R. Bloq",
-    esEquipo: false,
-    isDiff: true,
-    team1: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-    team2: {
-      total: 0,
-      home: 0,
-      away: 0,
-    },
-  };
+  // auxData["Remates Fuera"] = {
+  //   key: "Remates Fuera",
+  //   label: "R. Fuera",
+  //   esEquipo: true,
+  //   isDiff: false,
+  //   team1: {
+  //     total: 0,
+  //     home: 0,
+  //     away: 0,
+  //   },
+  //   team2: {
+  //     total: 0,
+  //     home: 0,
+  //     away: 0,
+  //   },
+  // };
+  // auxData["Remates FueraR"] = {
+  //   key: "Remates FueraR",
+  //   label: "R. Fuera",
+  //   esEquipo: false,
+  //   isDiff: true,
+  //   team1: {
+  //     total: 0,
+  //     home: 0,
+  //     away: 0,
+  //   },
+  //   team2: {
+  //     total: 0,
+  //     home: 0,
+  //     away: 0,
+  //   },
+  // };
+  // auxData["Remates bloqueados"] = {
+  //   key: "Remates bloqueados",
+  //   label: "R. Bloq",
+  //   esEquipo: true,
+  //   isDiff: false,
+  //   team1: {
+  //     total: 0,
+  //     home: 0,
+  //     away: 0,
+  //   },
+  //   team2: {
+  //     total: 0,
+  //     home: 0,
+  //     away: 0,
+  //   },
+  // };
+  // auxData["Remates bloqueadosR"] = {
+  //   key: "Remates bloqueadosR",
+  //   label: "R. Bloq",
+  //   esEquipo: false,
+  //   isDiff: true,
+  //   team1: {
+  //     total: 0,
+  //     home: 0,
+  //     away: 0,
+  //   },
+  //   team2: {
+  //     total: 0,
+  //     home: 0,
+  //     away: 0,
+  //   },
+  // };
   auxData["Salvadas de Portero"] = {
     key: "Salvadas de Portero",
     label: "Salv. Por",
@@ -2174,6 +2280,71 @@ function initData() {
       away: 0,
     },
   };
+  auxData["Grandes chances"] = {
+    key: "Grandes chances",
+    label: "Gr. Chan",
+    esEquipo: true,
+    isDiff: false,
+    team1: {
+      total: 0,
+      home: 0,
+      away: 0,
+    },
+    team2: {
+      total: 0,
+      home: 0,
+      away: 0,
+    },
+  };
+  auxData["Grandes chancesR"] = {
+    key: "Grandes chancesR",
+    label: "Gr. Chan",
+    esEquipo: false,
+    isDiff: true,
+    team1: {
+      total: 0,
+      home: 0,
+      away: 0,
+    },
+    team2: {
+      total: 0,
+      home: 0,
+      away: 0,
+    },
+  };
+  auxData["Goles esperados"] = {
+    key: "Goles esperados",
+    label: "xG",
+    esEquipo: true,
+    isDiff: false,
+    team1: {
+      total: 0,
+      home: 0,
+      away: 0,
+    },
+    team2: {
+      total: 0,
+      home: 0,
+      away: 0,
+    },
+  };
+  auxData["Goles esperadosR"] = {
+    key: "Goles esperadosR",
+    label: "xG",
+    esEquipo: false,
+    isDiff: true,
+    team1: {
+      total: 0,
+      home: 0,
+      away: 0,
+    },
+    team2: {
+      total: 0,
+      home: 0,
+      away: 0,
+    },
+  };
+
   auxData["Pases completados"] = {
     key: "Pases completados",
     label: "P. Compl",
