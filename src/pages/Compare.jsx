@@ -1403,16 +1403,17 @@ async function getGames(team, competitionId, seasonNum) {
     response.games = response.games.filter((game) => {
       return (
         // FILTRO DE LIGA -------->
-        // game.competitionId === competitionId &&
+        game.competitionId === competitionId &&
         // FILTRO DE TEMPORADA -------->
         // game.seasonNum === seasonNum &&
-        // FILTRO DE ID -------->
-        // !isNaN(game.roundNum) &&
         // FILTRO RED CARDS -------->
         // game.homeCompetitor.redCards === 0 &&
         // (game.awayCompetitor.redCards === 0) &&
+        // FILTRO DE ID -------->
+        !isNaN(game.roundNum) &&
         // FILTRO DE SECRET -------->
-        game.gameTime !== -1
+        game.gameTime !== -1 &&
+        true
       );
     });
     // Obtenemos el last gameId
@@ -1420,7 +1421,7 @@ async function getGames(team, competitionId, seasonNum) {
     // Agregar los Juegos faltantes
     // await addNextGames(team.id, lastGameId, seasonNum, response).then(async fullResponse => {
     // Llenamos el arreglo de games
-    response.games = response.games.slice(0, 16);
+    response.games = response.games.slice(0, 8);
     return response.games;
   });
 }
@@ -1446,9 +1447,9 @@ function setGames(team, stats, teamNum, games) {
   games.forEach((game) => {
     let _game = { stats: {} };
     _game.key = parseInt(game.roundNum);
-    // if (isNaN(_game.key)) {
-    //   _game.key = team.games.length + 1000;
-    // }
+    if (isNaN(_game.key)) {
+      _game.key = team.games.length + 1000;
+    }
     // GameId
     _game.id = parseInt(game.id);
     // Equipo esLocal
